@@ -1,6 +1,5 @@
 import { SplashScreen } from '../../components/splashscreen/splashpage.jsx'
 import * as React from 'react';
-import './home.css';
 import bleach from '../../assets/bleach.jpg'
 import aot from '../../assets/aot.jpg';
 import op from '../../assets/op.jpg';
@@ -36,8 +35,8 @@ export function Homepage(){
         }    
     }
     return(
-        <div className="home-page">
-            <SplashScreen/>
+        <div className="home-page bg-blue-500">
+            {/* <SplashScreen/> */}
             <section className='home-section'>
                 <div className='search-bar'>
                     <input type='text' onKeyDown={(event)=>handleSearchRequest(event)} placeholder='Search Anime'/>

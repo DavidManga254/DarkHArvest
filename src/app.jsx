@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouterProvider } from 'react-router-dom';
 import {createRoot} from 'react-dom/client'
 import { routes } from '../frontend/routes/routes';
-
+import "./app.css"
 function App (){
   return(
     <React.StrictMode>

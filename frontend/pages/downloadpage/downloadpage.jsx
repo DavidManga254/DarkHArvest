@@ -1,7 +1,6 @@
 import { useLocation } from "react-router-dom";
 import * as React from 'react';
 import { AnimeList } from "../../components/animelist/list.jsx";
-import './download.css'
 import { useState } from "react";
 //download page
 export function DownloadPage(){

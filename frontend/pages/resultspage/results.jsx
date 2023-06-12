@@ -1,7 +1,6 @@
 import { AnimeList } from "../../components/animelist/list.jsx";
 import { useLocation } from "react-router-dom";
 import * as React from 'react'
-import './results.css';
 export function SearchResults(){
     //location
     const location = useLocation();

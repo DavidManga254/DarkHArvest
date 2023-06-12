@@ -1,5 +1,4 @@
 import * as React from 'react';
-import './list.css'
 import { useNavigate } from 'react-router-dom';
 
 
