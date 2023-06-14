@@ -216,7 +216,7 @@ query getTrendingAnime{
 
 // Contains details and information of an anime sourced from anilist
 // Almost all of these attributes can be NULL/undefined for cases where the detail isn't contained in their database
-// For both string and number attributes the number state is null AND '', for int it's null AND 0
+// For string NULL state is null OR '', for number it's null OR 0
 class AnimeInformation {
     id: number ;// Anime ID as it's in the anilist database
     title: {
