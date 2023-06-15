@@ -252,7 +252,7 @@ class AnimeInformation {
   }
   
 // Search for an anime by a query, returns a list of results as AnimeInformation objects or an error
-async function searchAnime(query: string): Promise<AnimeInformation[] | Error> {
+export async function searchAnime(query: string): Promise<AnimeInformation[] | Error> {
     const options = {
         method: 'POST',
         headers: {
@@ -270,7 +270,7 @@ async function searchAnime(query: string): Promise<AnimeInformation[] | Error> {
 }
 
 // Get a list of the current trending anime, returns a list of results as AnimeInformation objects or an error
-async function getTrendingAnime(): Promise<AnimeInformation[] | Error>{
+export async function getTrendingAnime(): Promise<AnimeInformation[] | Error>{
     const options = {
         method: 'POST',
         headers: {
@@ -288,7 +288,7 @@ async function getTrendingAnime(): Promise<AnimeInformation[] | Error>{
 }
 
 // Get a specific anime by it's ID, returns an AnimeInformation object or an error
-async function getAnimeByID(id: number): Promise<AnimeInformation | Error> {
+export async function getAnimeByID(id: number): Promise<AnimeInformation | Error> {
     const options = {
         method: 'POST',
         headers: {
@@ -306,7 +306,7 @@ async function getAnimeByID(id: number): Promise<AnimeInformation | Error> {
 }
 
 // Get a specifc anime by it's title, returns an AnimeInformation object or an error
-async function getAnimeByTitle(title: string): Promise<AnimeInformation | Error> {
+export async function getAnimeByTitle(title: string): Promise<AnimeInformation | Error> {
     const options = {
         method: 'POST',
         headers: {
