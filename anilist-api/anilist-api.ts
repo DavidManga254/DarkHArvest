@@ -216,42 +216,133 @@ query getTrendingAnime{
       }
   }
 }
-`;
+`;/**
+ * Contains details and information of an anime, sourced from AniList.
+ * Almost all of these attributes can be undefined for cases where the detail isn't contained in their database.
+ */
+export class AnimeInformation {
+  /**
+   * Anime ID as it's in the AniList database.
+   */
+  id: number | undefined;
 
-// Contains details and information of an anime, sourced from anilist
-// Almost all of these attributes can be undefined for cases where the detail isn't contained in their database
-class AnimeInformation {
-    id: number | undefined;// Anime ID as it's in the anilist database
-    title: {
-      english: string | undefined; // Anime title in English e.g Attack on Titan
-      romaji: string | undefined; // Anime title in Japanese e.g Shingeki No Kyojin
-    } | undefined;
-    coverImage: string | undefined; // Direct url to the cover image
-    startDate: string | undefined; // Date the anime started airing, in the format D-M-Y
-    endDate: string | undefined; // Date the anime ended airing, in the format D-M-Y
-    studio: string | undefined; // Main studio that made the anime
-    nextAiringEpisode: {
-      airingOn: string |undefined; // Date when the next episode will air, in the format H:M:S D-M-Y
-      timeUntilAiring: string | undefined; // Time remaining before next episode airs, format depends on how long it is, check line 403
-      episode: number | undefined; // The number of the episode that is to air
-    } | undefined;
-    rank: {
-      popularity: number // Rank of the anime based off popularity
-      rating: number // Rank of the anime based off rating
-      year: number | undefined// Year the ranking was made, when year is zero it means the rank is of ALL TIME
-    } | undefined
-    trailer: string | undefined; // Direct url to the anime's trailer, sources youtube or dailymotion, one of either
-    bannerImage: string | undefined; // Direct url to the anime's banner image
-    status: string | undefined; // Airing status, e.g FINISHED, RELEASING   
-    episodes: number | undefined; // Total number of episodes the anime has
-    season: string | undefined; // Season the anime aired in 
-    description: string | undefined; // Brief summary of the anime
-    meanScore: number | undefined; // Mean score rating of the anime
-    genres: string[] | undefined; // List of genres the anime is in
+  /**
+   * Anime title in English and Japanese.
+   */
+  title: {
+    /**
+     * Anime title in English. e.g., Attack on Titan.
+     */
+    english: string | undefined;
+    /**
+     * Anime title in Japanese. e.g., Shingeki No Kyojin.
+     */
+    romaji: string | undefined;
+  } | undefined;
+
+  /**
+   * Direct URL to the cover image.
+   */
+  coverImage: string | undefined;
+
+  /**
+   * Date the anime started airing, in the format D-M-Y.
+   */
+  startDate: string | undefined;
+
+  /**
+   * Date the anime ended airing, in the format D-M-Y.
+   */
+  endDate: string | undefined;
+
+  /**
+   * Main studio that made the anime.
+   */
+  studio: string | undefined;
+
+  /**
+   * Information about the next airing episode.
+   */
+  nextAiringEpisode: {
+    /**
+     * Date when the next episode will air, in the format H:M:S D-M-Y.
+     */
+    airingOn: string | undefined;
+    /**
+     * Time remaining before the next episode airs. The format depends on how long it is. Please check line 403.
+     */
+    timeUntilAiring: string | undefined;
+    /**
+     * The number of the episode that is to air.
+     */
+    episode: number | undefined;
+  } | undefined;
+
+  /**
+   * Ranking information of the anime based on popularity and rating.
+   */
+  rank: {
+    /**
+     * Rank of the anime based on popularity.
+     */
+    popularity: number;
+    /**
+     * Rank of the anime based on rating.
+     */
+    rating: number;
+    /**
+     * Year the ranking was made. When the year is zero, it means the rank is of ALL TIME.
+     */
+    year: number | undefined;
+  } | undefined;
+
+  /**
+   * Direct URL to the anime's trailer, sourced from YouTube or Dailymotion.
+   */
+  trailer: string | undefined;
+
+  /**
+   * Direct URL to the anime's banner image.
+   */
+  bannerImage: string | undefined;
+
+  /**
+   * Airing status of the anime, e.g., FINISHED, RELEASING.
+   */
+  status: string | undefined;
+
+  /**
+   * Total number of episodes the anime has.
+   */
+  episodes: number | undefined;
+
+  /**
+   * Season the anime aired in.
+   */
+  season: string | undefined;
+
+  /**
+   * Brief summary of the anime.
+   */
+  description: string | undefined;
+
+  /**
+   * Mean score rating of the anime.
+   */
+  meanScore: number | undefined;
+
+  /**
+   * List of genres the anime is in.
+   */
+  genres: string[] | undefined;
+}
+
   
-  }
-  
-// Search for an anime by a query, returns a list of results as AnimeInformation objects or an error
+/** 
+ * Searches for the anime by the provided query
+ * @param {string} query - The search query string.
+ * @returns {(AnimeInformation | Error)} An array of  {@link AnimeInformation} objects or an {@link Error}.
+ */
 export async function searchAnime(query: string): Promise<AnimeInformation[] | Error> {
     const options = {
         method: 'POST',
@@ -269,7 +360,10 @@ export async function searchAnime(query: string): Promise<AnimeInformation[] | E
     .catch(handleError);
 }
 
-// Get a list of the current trending anime, returns a list of results as AnimeInformation objects or an error
+/** 
+ * Gets a list of the current trending anime
+ * @returns {(AnimeInformation | Error)} An array {@link AnimeInformation} objects or an {@link Error}.
+ */
 export async function getTrendingAnime(): Promise<AnimeInformation[] | Error>{
     const options = {
         method: 'POST',
@@ -287,7 +381,11 @@ export async function getTrendingAnime(): Promise<AnimeInformation[] | Error>{
     .catch(handleError);
 }
 
-// Get a specific anime by it's ID, returns an AnimeInformation object or an error
+/** 
+ * Retrieves an anime that has the provided id
+ * @param {number} id the ID of the chosen anime
+ * @returns {(AnimeInformation | Error)} An  {@link AnimeInformation} object or an {@link Error}.
+ */
 export async function getAnimeByID(id: number): Promise<AnimeInformation | Error> {
     const options = {
         method: 'POST',
@@ -305,7 +403,11 @@ export async function getAnimeByID(id: number): Promise<AnimeInformation | Error
     .catch(handleError);
 }
 
-// Get a specifc anime by it's title, returns an AnimeInformation object or an error
+/** 
+ * Retrieves an anime that has the provided title
+ * @param {string} title the title of the anime
+ * @returns {(AnimeInformation | Error)} An  {@link AnimeInformation} object or an {@link Error}.
+ */
 export async function getAnimeByTitle(title: string): Promise<AnimeInformation | Error> {
     const options = {
         method: 'POST',
@@ -416,7 +518,7 @@ function createAnimeInformationObject (json: any): AnimeInformation {
 
 // TESTS ( ALL PASSED TESTS ) 🐐
 
- searchAnime('Bleach').then( (results) => { console.log(results) });
+// searchAnime('Bleach').then( (results) => { console.log(results) });
 // getTrendingAnime().then( (results) => { console.log(results) });
 // getAnimeByID(20).then( (result) => { console.log(result) }); // Naruto's ID is 20 on the anilist database
 // getAnimeByTitle('jujutsu season').then( (result) => { console.log(result) });
