@@ -1,4 +1,4 @@
-const anilistApiEndpoint = 'https://graphql.anilist.co';
+const anilistApiEntrypoint = 'https://graphql.anilist.co';
 
 // Initialising global query variables
 
@@ -38,6 +38,7 @@ query getAnimeByID($id: Int) {
     }
     rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
       rank
+      year
     }
     trailer { 
       site
@@ -90,6 +91,7 @@ query getAnimeByTitle($query: String) {
       }
       rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
         rank
+        year
       }
       trailer { 
         site
@@ -143,6 +145,7 @@ query searchAnime($query: String) {
       }
       rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
         rank
+        year
       }
       trailer { 
         site
@@ -197,6 +200,7 @@ query getTrendingAnime{
       }
       rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
         rank
+        year
       }
       trailer { 
         site
@@ -214,79 +218,37 @@ query getTrendingAnime{
 }
 `;
 
-// Contains details and information of an anime sourced from anilist
-// Almost all of these attributes can be NULL/undefined for cases where the detail isn't contained in their database
-// For string NULL state is null OR '', for number it's null OR 0
+// Contains details and information of an anime, sourced from anilist
+// Almost all of these attributes can be undefined for cases where the detail isn't contained in their database
 class AnimeInformation {
-    id: number ;// Anime ID as it's in the anilist database
+    id: number | undefined;// Anime ID as it's in the anilist database
     title: {
-      english: string; // Anime title in English e.g Attack on Titan
-      romaji: string; // Anime title in Japanese e.g Shingeki No Kyojin
-    };
-    coverImage: string; // Direct url to the cover image
-    startDate: string; // The date the anime started airing
-    endDate: string; // The date the anime ended airing
-    studio: string ;// Main studio that made the anime
+      english: string | undefined; // Anime title in English e.g Attack on Titan
+      romaji: string | undefined; // Anime title in Japanese e.g Shingeki No Kyojin
+    } | undefined;
+    coverImage: string | undefined; // Direct url to the cover image
+    startDate: string | undefined; // Date the anime started airing, in the format D-M-Y
+    endDate: string | undefined; // Date the anime ended airing, in the format D-M-Y
+    studio: string | undefined; // Main studio that made the anime
     nextAiringEpisode: {
-      airingOn: string; // Date when the next episode will air
-      timeUntilAiring: string; // Time remaining before next episode airs
-      episode: number; // The number of the episode that is to air
-    };
-    popularityRank: number;// Rank of the anime based off popularity
-    ratingRank: number;// Rank of the anime based off rating
-    trailer: string;// Direct url to the anime's trailer, souces youtube/dailymotion, on of either
-    bannerImage: string;// Direct link to the anime's banner image
-    status: string; // Airing status, e.g FINISHED, AIRING   
-    episodes: number; // Total number of episodes
-    season: string; // Season the anime aired in 
-    description: string; // Brief summary/synopsis of the anime
-    meanScore: number; // Mean score rating of the anime
-    genres: string[]; // List of genres the anime is in
+      airingOn: string |undefined; // Date when the next episode will air, in the format H:M:S D-M-Y
+      timeUntilAiring: string | undefined; // Time remaining before next episode airs, format depends on how long it is, check line 403
+      episode: number | undefined; // The number of the episode that is to air
+    } | undefined;
+    rank: {
+      popularity: number // Rank of the anime based off popularity
+      rating: number // Rank of the anime based off rating
+      year: number | undefined// Year the ranking was made, when year is zero it means the rank is of ALL TIME
+    } | undefined
+    trailer: string | undefined; // Direct url to the anime's trailer, sources youtube or dailymotion, one of either
+    bannerImage: string | undefined; // Direct url to the anime's banner image
+    status: string | undefined; // Airing status, e.g FINISHED, RELEASING   
+    episodes: number | undefined; // Total number of episodes the anime has
+    season: string | undefined; // Season the anime aired in 
+    description: string | undefined; // Brief summary of the anime
+    meanScore: number | undefined; // Mean score rating of the anime
+    genres: string[] | undefined; // List of genres the anime is in
   
-    constructor(
-      id: number,
-      title: {
-        english: string;
-        romaji: string;
-      },
-      coverImage: string,
-      startDate: string,
-      endDate: string,
-      studio: string,
-      nextAiringEpisode: {
-        airingOn: string;
-        timeUntilAiring: string;
-        episode: number;
-      },
-      popularityRank: number,
-      ratingRank: number,
-      trailer: string,
-      bannerImage: string,
-      status: string,
-      episodes: number,
-      season: string,
-      description: string,
-      meanScore: number,
-      genres: string[]
-    ) {
-      this.id = id;
-      this.title = title;
-      this.coverImage = coverImage;
-      this.bannerImage = bannerImage;
-      this.startDate = startDate;
-      this.endDate = endDate;
-      this.studio = studio;
-      this.nextAiringEpisode = nextAiringEpisode;
-      this.popularityRank = popularityRank;
-      this.ratingRank = ratingRank;
-      this.trailer = trailer;
-      this.status = status;
-      this.episodes = episodes;
-      this.season = season;
-      this.description = description;
-      this.meanScore = meanScore;
-      this.genres = genres;
-    }
   }
   
 // Search for an anime by a query, returns a list of results as AnimeInformation objects or an error
@@ -302,7 +264,7 @@ async function searchAnime(query: string): Promise<AnimeInformation[] | Error> {
             variables: {'query': query}
         })
     };
-    return fetch(anilistApiEndpoint, options).then(handleResponse)
+    return fetch(anilistApiEntrypoint, options).then(handleResponse)
     .then(handleMultipleResults)
     .catch(handleError);
 }
@@ -320,7 +282,7 @@ async function getTrendingAnime(): Promise<AnimeInformation[] | Error>{
             variables: {}
         })
     };
-    return fetch(anilistApiEndpoint, options).then(handleResponse)
+    return fetch(anilistApiEntrypoint, options).then(handleResponse)
     .then(handleMultipleResults)
     .catch(handleError);
 }
@@ -338,7 +300,7 @@ async function getAnimeByID(id: number): Promise<AnimeInformation | Error> {
             variables: {'id': id}
         })
     };
-    return fetch(anilistApiEndpoint, options).then(handleResponse)
+    return fetch(anilistApiEntrypoint, options).then(handleResponse)
     .then(handleResult)
     .catch(handleError);
 }
@@ -356,7 +318,7 @@ async function getAnimeByTitle(title: string): Promise<AnimeInformation | Error>
             variables: {'query': title}
         })
     };
-    return fetch(anilistApiEndpoint, options).then(handleResponse)
+    return fetch(anilistApiEntrypoint, options).then(handleResponse)
     .then(handleResult)
     .catch(handleError);
 }
@@ -401,74 +363,60 @@ function convertUnixEpochToNormalDateTime(epochTime: number): string {
     const formattedDate = `${hours}:${minutes}:${seconds} ${day}-${month}-${year}`;
     return formattedDate;
   }
+
+// Helper pseudo monad to check for undefined, null or empty array values, only applies the function/transformer if the passed object is not undefined/null/empty array
+function applyFunctionIfNotUndefined(obj: any, func: Function): any  {
+  if (obj !== undefined && obj !== null) { 
+    if (obj?.length <= 0) {
+      return undefined;}
+    return func(obj); }
+  return undefined;
   
-
-function createAnimeInformationObject (json: any): AnimeInformation {
-    let title = json['title'];
-    const id = json['id'];
-    const coverImage = json['coverImage']['large'];
-    const bannerImage = json['bannerImage'];
-    const status = json['status'];
-    const episodes = json['episodes'];
-    const season = json['season'];
-    const description = json['description'];
-    const meanScore = json['meanScore'];
-    const genres = json['genres'];
-    
-    // These will be preprocessed first i.e dynamically converted into a more acceptable format e.g converting epoch time to normal time
-    let trailer: string = '';
-    let startDate: string = '';
-    let endDate: string = '';
-    let nxtAirEps = {airingOn: '', timeUntilAiring: '', episode: 0};
-    let studio: string = ''; // Included cause some studios are unknown
-    let popularityRank: number = 0;  // Included cause some rankings may be unknowm
-    let ratingRank: number = 0; // Included cause some rankings may be unknowm
-
-
-    const rankObject = json['rankings'];
-    if (rankObject.length >= 2) {
-        popularityRank = rankObject[0]['rank'];
-        ratingRank = rankObject[1]['rank'];
-    }
-    
-    const stdObject = json['studios']['nodes'];
-    if (stdObject.length > 0) { studio = stdObject[0]['name'];}
-
-    const sDObject = json['startDate'];
-    if (sDObject['day']) { startDate = `${sDObject['day']}-${sDObject['month']}-${sDObject['year']}`;}
-
-    const eDObj = json['endDate'];
-    if (eDObj['day']) { endDate = `${eDObj['day']}-${eDObj['month']}-${eDObj['year']}`;}
-
-    const nxtAirEpsObj = json['nextAiringEpisode'];
-    if (nxtAirEpsObj) {     // Date and time in format H:M:S D-M-Y
-        nxtAirEps.airingOn = convertUnixEpochToNormalDateTime(nxtAirEpsObj['airingAt']);
-        nxtAirEps.timeUntilAiring = ( (timeUntilAir: number) => {
-            if (timeUntilAir) {
-                // If the time until air is more than or equal to a full day then format the string as a day and so on.. .
-                if (timeUntilAir >= 86400) { return `${(timeUntilAir / 86400)} days`;}
-                else if (timeUntilAir >= 3600) { return `${(timeUntilAir / 3600)} hours`;}
-                else if (timeUntilAir >= 60) { return `${(timeUntilAir / 60)} minutes`;}
-                else { return `${timeUntilAir} seconds`;}
-            }
-            else { 
-                return ''};
-        })(nxtAirEpsObj['timeUntilAir']);
-        nxtAirEps.episode = nxtAirEpsObj['episode'];
-    }
-
-    const trailerObj = json['trailer'];
-    if ( trailerObj ) {
-        if (trailerObj['site'] == 'youtube') { trailer = `https://youtube.com/watch?v=${trailerObj['id']}`;}
-        else if (trailerObj['site'] == 'dailymotion') { trailer = `https:/dailymotion.com/video/${trailerObj['id']}`;}
-    }
-    return new AnimeInformation(id, title, coverImage, startDate, endDate, studio, nxtAirEps, popularityRank, ratingRank, trailer, bannerImage, status, episodes, season, description, meanScore, genres);
-
 }
 
-// TESTS (PASSED TESTS) 🐐
+// Does nothing lol, used when no transformation is to be applied to the item before it is loaded into animeInformation as an attribute
+function doNothing(obj: any): any{return obj;}
 
-// searchAnime('Naruto').then( (results) => { console.log(results) });
+function createAnimeInformationObject (json: any): AnimeInformation {
+    let animeInfo = new AnimeInformation();
+
+    animeInfo.title = {english: applyFunctionIfNotUndefined(json['title']['english'], doNothing), romaji: applyFunctionIfNotUndefined(json['title']['romaji'], doNothing)}
+    animeInfo.id = applyFunctionIfNotUndefined(json['id'], doNothing);
+    animeInfo.coverImage = applyFunctionIfNotUndefined(json['coverImage']['large'], doNothing);
+    animeInfo.bannerImage = applyFunctionIfNotUndefined(json['bannerImage'], doNothing);
+    animeInfo.status = applyFunctionIfNotUndefined(json['status'], doNothing);
+    animeInfo.episodes = applyFunctionIfNotUndefined(json['episodes'], doNothing);
+    animeInfo.season = applyFunctionIfNotUndefined(json['season'], doNothing);
+    animeInfo.description = applyFunctionIfNotUndefined(json['description'], doNothing);
+    animeInfo.meanScore = applyFunctionIfNotUndefined(json['meanScore'], doNothing);
+    animeInfo.genres = applyFunctionIfNotUndefined(json['genres'], doNothing);    
+    animeInfo.studio = applyFunctionIfNotUndefined(json['studios']['nodes'], (nodes: Array<{name: string}>)=>{return nodes[0]['name']});
+    const rankings = applyFunctionIfNotUndefined(json['rankings'], (list: Array<{rank: number, year: number}>)=>{return list.length >= 2 ? (list.slice(0, 2)) : (undefined)});
+    animeInfo.rank = rankings ? {popularity: rankings[0]['rank'], rating: rankings[1]['rank'], year: applyFunctionIfNotUndefined(rankings[0]['year'], doNothing) ? rankings[0]['year'] : 0} : undefined;
+    animeInfo.trailer = applyFunctionIfNotUndefined(json['trailer'], 
+    (trailer: {site: string, id: string}) => { return trailer['site'] == 'youtube' ? `https://youtube.com/watch?v=${json['trailer']['id']}` : `https:/dailymotion.com/video/${json['trailer']['id']}`});
+    let dateAnime = json['startDate'];
+    animeInfo.startDate = dateAnime['day'] && dateAnime['month'] && dateAnime['year'] ? `${dateAnime['day']}-${dateAnime['month']}-${dateAnime['year']}` : undefined;
+    dateAnime = json['endDate'];
+    animeInfo.endDate = dateAnime['day'] && dateAnime['month'] && dateAnime['year'] ? `${dateAnime['day']}-${dateAnime['month']}-${dateAnime['year']}` : undefined;
+
+    animeInfo.nextAiringEpisode = applyFunctionIfNotUndefined(json['nextAiringEpisode'], (nxtAirEps: {timeUntilAiring: number, airingAt: number, episode: number}) => 
+    { return {timeUntilAiring: applyFunctionIfNotUndefined(nxtAirEps['timeUntilAiring'],
+    (time: number)=>{
+      if (time >= 86400) { return `${Math.round(time / 86400)} days`;}
+                else if (time >= 3600) { return `${Math.round(time / 3600)} hours`;}
+                else if (time >= 60) { return `${Math.round(time / 60)} minutes`;}
+                else { return `${time} seconds`;}
+    }),
+    airingOn: applyFunctionIfNotUndefined(nxtAirEps['airingAt'], convertUnixEpochToNormalDateTime),
+    episode: applyFunctionIfNotUndefined(nxtAirEps['episode'], doNothing)
+  } });
+   return animeInfo;
+}
+
+// TESTS ( ALL PASSED TESTS ) 🐐
+
+ searchAnime('Bleach').then( (results) => { console.log(results) });
 // getTrendingAnime().then( (results) => { console.log(results) });
 // getAnimeByID(20).then( (result) => { console.log(result) }); // Naruto's ID is 20 on the anilist database
-// getAnimeByTitle('Naruto').then( (result) => { console.log(result) });
+// getAnimeByTitle('jujutsu season').then( (result) => { console.log(result) });

@@ -31,6 +31,8 @@ fragment AnimeInfomation on Media {
     episode
   }
   rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
+    rank
+    year
   }
   trailer { # Can be EMPTY
     site
@@ -80,6 +82,7 @@ query getAnimeByID($id: Int) {
     }
     rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
       rank
+      year
     }
     trailer { # Can be EMPTY
       site
@@ -129,6 +132,7 @@ query getAnimeByTitle($query: String) {
       }
       rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
         rank
+        year
       }
       trailer { # Can be EMPTY
         site
@@ -180,6 +184,7 @@ query searchAnime($query: String) {
       }
       rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
         rank
+        year
       }
       trailer { # Can be EMPTY
         site
@@ -232,6 +237,7 @@ query getTrendingAnime{
       }
       rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
         rank
+        year
       }
       trailer { # Can be EMPTY
         site
