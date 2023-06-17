@@ -42,6 +42,10 @@
   },
   "dependencies": {
     "@apollo/client": "^3.7.15",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.13.5",
     "apollo-boost": "^0.4.9",
     "apollo-client": "^2.6.10",
     "electron-squirrel-startup": "^1.0.0",
@@ -58,5 +62,24 @@
     "react-router-dom": "^6.11.0",
     "sort-by": "^1.2.0",
     "user-agents": "^1.0.1358"
-  }
+  },
+  "plugins": [
+    [
+      "@electron-forge/plugin-webpack",
+      {
+        "devContentSecurityPolicy": "default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;",
+        "mainConfig": "./webpack.main.config.js",
+        "renderer": {
+          "config": "./webpack.renderer.config.js",
+          "entryPoints": [
+            {
+              "html": "./src/index.html",
+              "js": "./src/renderer.js",
+              "name": "main_window"
+            }
+          ]
+        }
+      }
+    ]
+  ]
 }

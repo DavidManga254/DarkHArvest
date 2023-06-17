@@ -355,6 +355,7 @@ export async function searchAnime(query: string): Promise<AnimeInformation[] | E
             variables: {'query': query}
         })
     };
+    
     return fetch(anilistApiEntrypoint, options).then(handleResponse)
     .then(handleMultipleResults)
     .catch(handleError);
