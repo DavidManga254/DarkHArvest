@@ -1,0 +1,257 @@
+# Return is loosely used to refer to the query response in the format it will be represented in code
+
+# Fragment containing information about an anime returned as a result 
+fragment AnimeInfomation on Media {
+  id
+  title {
+    english # Can be EMPTY
+    romaji
+  }
+  coverImage {
+    large
+  }
+  startDate {# Can be EMPTY
+    year
+    month
+    day
+  }
+  endDate { # Can be EMPTY
+    year
+    month
+    day
+  }
+  studios(isMain: true) {
+    nodes {
+      name
+    }
+  }
+  nextAiringEpisode { # Can be EMPTY
+    airingAt
+    timeUntilAiring
+    episode
+  }
+  rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
+    rank
+    year
+  }
+  trailer { # Can be EMPTY
+    site
+    id
+  }
+  bannerImage
+  status
+  episodes
+  season
+  description
+  meanScore
+  genres
+}
+
+
+# Retrieves the anime matching the provided id, returns a result
+query getAnimeByID($id: Int) {
+  Media(id: $id, type: ANIME) {
+    # ...AnimeInfomation
+    id
+    title {
+      english # Can be EMPTY
+      romaji
+    }
+    coverImage {
+      large
+    }
+    startDate {
+      year
+      month
+      day
+    }
+    endDate {
+      year
+      month
+      day
+    }
+    studios(isMain: true) {
+      nodes {
+        name
+      }
+    }
+    nextAiringEpisode { # Can be EMPTY
+      airingAt
+      timeUntilAiring
+      episode
+    }
+    rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
+      rank
+      year
+    }
+    trailer { # Can be EMPTY
+      site
+      id
+    }
+    bannerImage
+    status
+    episodes
+    season
+    description
+    meanScore
+    genres
+    }
+}
+
+# Retrieves the FIRST search result of the anime matching the provided title, returns the FIRST search result
+query getAnimeByTitle($query: String) {
+    Media(search: $query, type: ANIME) {
+      # ...AnimeInfomation
+      id
+      title {
+        english # Can be EMPTY
+        romaji
+      }
+      coverImage {
+        large
+      }
+      startDate {
+        year
+        month
+        day
+      }
+      endDate {
+        year
+        month
+        day
+      }
+      studios(isMain: true) {
+        nodes {
+          name
+        }
+      }
+      nextAiringEpisode { # Can be EMPTY
+        airingAt
+        timeUntilAiring
+        episode
+      }
+      rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
+        rank
+        year
+      }
+      trailer { # Can be EMPTY
+        site
+        id
+      }
+      bannerImage
+      status
+      episodes
+      season
+      description
+      meanScore
+      genres
+    }
+}
+
+
+# Searches for the specified anime, returns a list of ALL the search results
+query searchAnime($query: String) {
+  Page {
+    media(search: $query, type: ANIME) {
+      # ...AnimeInfomation
+      id
+      title {
+        english # Can be EMPTY
+        romaji
+      }
+      coverImage {
+        large
+      }
+      startDate {
+        year
+        month
+        day
+      }
+      endDate {
+        year
+        month
+        day
+      }
+      studios(isMain: true) {
+        nodes {
+          name
+        }
+      }
+      nextAiringEpisode { # Can be EMPTY
+        airingAt
+        timeUntilAiring
+        episode
+      }
+      rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
+        rank
+        year
+      }
+      trailer { # Can be EMPTY
+        site
+        id
+      }
+      bannerImage
+      status
+      episodes
+      season
+      description
+      meanScore
+      genres
+      }
+    }
+}
+
+
+# Retrieves the trending anime, returns a list of the trending anime
+query getTrendingAnime{
+  Page {
+    media(sort: TRENDING_DESC, type: ANIME) {
+      # ...AnimeInfomation
+      id
+      title {
+        english # Can be EMPTY
+        romaji
+      }
+      coverImage {
+        large
+      }
+      startDate {
+        year
+        month
+        day
+      }
+      endDate {
+        year
+        month
+        day
+      }
+      studios(isMain: true) {
+        nodes {
+          name
+        }
+      }
+      nextAiringEpisode { # Can be EMPTY
+        airingAt
+        timeUntilAiring
+        episode
+      }
+      rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
+        rank
+        year
+      }
+      trailer { # Can be EMPTY
+        site
+        id
+      }
+      bannerImage
+      status
+      episodes
+      season
+      description
+      meanScore
+      genres
+      }
+  }
+}
+
+
