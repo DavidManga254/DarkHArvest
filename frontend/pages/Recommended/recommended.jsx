@@ -2,29 +2,42 @@ import { getTrendingAnime } from "../../../anilist-api/anilist-api";
 import React from "react";
 import {useEffect,useState} from "react";
 import StarIcon from '@mui/icons-material/Star';
+import { SideBar } from "../../components/sidebar/sidebar.jsx";
+import { useNavigate } from 'react-router-dom';
 
 
 export function Recommended(){
     const [animeList, setList] = useState(null);
+    const navigate = useNavigate()
     //get trending anime
     useEffect(()=>{
         (async()=>{
             let response = await getTrendingAnime();
-            console.log("here is the reposne",response);
+            // console.log("here is the reposne",response);
             setList(response);
+            console.log(response);
         })();
         
     },[]);
+    //navigate function
+    function navigateToDetails(animeData){
+        navigate("/download",{
+            state:animeData
+        });
+    }
 
     //return conditions
     return animeList === null ? <div>Hello world</div>
     :  
-        <div>
-            <div className="w-full flex flex-row flex-wrap">
+        <div className="page-layout">
+            <div className="sidebar">
+                <SideBar/>
+            </div>
+            <div className="mainbar">
                 {
                     animeList.map((anime,index)=>{
                         return(
-                            <div key={index} className="sm:w-[40%] md:w-[23%] m-2 hover:cursor-pointer">
+                            <div onClick={(()=>navigateToDetails(anime))} key={index} className="sm:w-[30%] md:w-[22%] lg:w-[15%] m-2 hover:cursor-pointer">
                                 <div className="relative w-full">
                                     <div className="absolute">
                                         <div className="rounded-3xl bg-rateBackground">

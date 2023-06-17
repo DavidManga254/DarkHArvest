@@ -58,6 +58,7 @@ const createWindow = async () => {
   // and load the index.html of the app.
   try{
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+    mainWindow.setMinimumSize(770,700)
   }catch(err){
     console.log('error loading app',err)
   }

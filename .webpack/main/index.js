@@ -29546,6 +29546,7 @@ const createWindow = async () => {
   // and load the index.html of the app.
   try {
     mainWindow.loadURL('http://localhost:3000/main_window');
+    mainWindow.setMinimumSize(770, 700);
   } catch (err) {
     console.log('error loading app', err);
   }

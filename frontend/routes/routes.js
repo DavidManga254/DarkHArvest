@@ -10,7 +10,7 @@ import { Recommended } from '../pages/Recommended/recommended.jsx';
 export const routes = createBrowserRouter([
     {
         path:'/main_window',
-        element:<Recommended/>
+        element:<DownloadPage/>
 
     },
     {
@@ -18,7 +18,7 @@ export const routes = createBrowserRouter([
         element:<SearchResults/>
     },
     {
-        path:'download',
+        path:'/download',
         element:<DownloadPage/>
     }
 ])
