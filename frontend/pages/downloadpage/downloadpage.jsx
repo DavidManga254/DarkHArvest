@@ -93,75 +93,135 @@ export function DownloadPage(){
     }
     
     return(
+        // <div className="page-layout">
+        //     <div className="sidebar">
+        //         <SideBar/>
+        //     </div>
+        //     <div className="mainbar">
+        //         <div>
+        //             <img src={animeInfo.bannerImage !== undefined?animeInfo.bannerImage:null} />
+        //         </div>
+        //         {/* header section */}
+        //         <div>
+        //             <h1>{animeInfo.title !== undefined? animeInfo.title.romaji:null}</h1>
+        //             <div>
+        //                 {
+        //                     animeInfo.genres !== undefined? animeInfo.genres.map((genre,index)=>{
+        //                         if(index!==animeInfo.genres.length-1){
+        //                             return(
+        //                                 <span className="md:text-xs text-grey w-full break-words" key={index}>{genre}, </span>
+        //                             )
+        //                         }else{
+        //                             return(
+        //                                 <span className="md:text-xs text-grey w-full break-words" key={index}>{genre}</span>
+        //                             )
+        //                         }
+        //                     }):null
+        //                 }
+                        
+        //             </div>
+        //         </div>
+        //         {/* division section */}
+        //         <div className="flex flex-row">
+        //                 <div className="bg-blue-500 w-1/2">
+        //                         {/* left */}
+        //                         <div>
+        //                             {
+        //                                 animeInfo.studio !== undefined || animeInfo.studio? <div><span>Studio:</span>{animeInfo.studio}<span></span></div>:null
+        //                             }
+        //                         </div>
+        //                         <div>
+
+        //                             {
+        //                                 animeInfo.status !== undefined?<div><span>Status:</span>{animeInfo.status}<span></span></div>:null
+        //                             }
+
+        //                         </div>
+        //                         <div>
+
+        //                             {
+        //                                 animeInfo.nextAiringEpisode.airingOn !== undefined || animeInfo.season?<div><span>Time to Air:</span><CountdownTimer targetDate={animeInfo.nextAiringEpisode.airingOn}/> <span></span></div>:null
+        //                             }
+
+        //                         </div>
+        //                         <div>
+        //                             {
+        //                                 //animeInfo.description !== undefined || animeInfo.description?<TruncatedText text={animeInfo.description} maxLength={200}/>:null
+        //                             }
+        //                         </div>
+        //                         <div>
+        //                             {
+        //                                 animeInfo.season !== undefined || animeInfo.season? <div><span>Season:</span>{animeInfo.season}<span></span></div>:null
+        //                             }
+        //                         </div>
+                                
+                                
+        //                 </div>
+        //                 {/* right section */}
+        //                 {/* <div className="flex-grow bg-blue-500">
+        //                         {/* trailer *
+        //                         <div>
+        //                             {
+        //                                 animeInfo.trailer !== undefined? <iframe
+        //                                 className="video-iframe"
+        //                                 src={animeInfo.trailer.replace("https://youtube.com/watch?v=","https://www.youtube.com/embed/")}
+        //                                 title="YouTube Video"
+        //                                 frameBorder="0"
+        //                                 allowFullScreen
+        //                             /> : null
+        //                             }
+        //                         </div>
+        //                 </div> */}
+        //         </div>
+                
+        //     </div>
+        // </div>
+
         <div className="page-layout">
             <div className="sidebar">
                 <SideBar/>
             </div>
             <div className="mainbar">
-                <div>
-                    <img src={animeInfo.bannerImage !== undefined?animeInfo.bannerImage:null} />
+                {/* banneer */}
+                <div className="w-full">
+                    <img src={animeInfo.bannerImage} className="w-full aspect-auto"></img>
                 </div>
-                {/* header section */}
-                <div>
-                    <h1>{animeInfo.title !== undefined? animeInfo.title.romaji:null}</h1>
-                    <div>
-                        {
-                            animeInfo.genres !== undefined? animeInfo.genres.map((genre,index)=>{
-                                if(index!==animeInfo.genres.length-1){
-                                    return(
-                                        <span className="md:text-xs text-grey w-full break-words" key={index}>{genre}, </span>
-                                    )
-                                }else{
-                                    return(
-                                        <span className="md:text-xs text-grey w-full break-words" key={index}>{genre}</span>
-                                    )
-                                }
-                            }):null
-                        }
-                        
-                    </div>
-                </div>
-                {/* division section */}
-                <div className="flex flex-row">
-                        <div className="bg-blue-500 w-1/2">
-                                {/* left */}
-                                <div>
-                                    {
-                                        animeInfo.studio !== undefined || animeInfo.studio? <div><span>Studio:</span>{animeInfo.studio}<span></span></div>:null
-                                    }
-                                </div>
-                                <div>
 
-                                    {
-                                        animeInfo.status !== undefined?<div><span>Status:</span>{animeInfo.status}<span></span></div>:null
-                                    }
-
-                                </div>
-                                <div>
-
-                                    {
-                                        animeInfo.nextAiringEpisode.airingOn !== undefined || animeInfo.season?<div><span>Time to Air:</span><CountdownTimer targetDate={animeInfo.nextAiringEpisode.airingOn}/> <span></span></div>:null
-                                    }
-
-                                </div>
-                                <div>
-                                    {
-                                        //animeInfo.description !== undefined || animeInfo.description?<TruncatedText text={animeInfo.description} maxLength={200}/>:null
-                                    }
-                                </div>
-                                <div>
-                                    {
-                                        animeInfo.season !== undefined || animeInfo.season? <div><span>Season:</span>{animeInfo.season}<span></span></div>:null
-                                    }
-                                </div>
-                                
-                                
+                <div className="flex flex-row bg-red-500 w-full">
+                    {/* left section */}
+                    <div className="w-[25%]">
+                        {/* anime image */}
+                        <div>
+                            <img src={animeInfo.coverImage}/>
                         </div>
-                        {/* right section */}
-                        {/* <div className="flex-grow bg-blue-500">
-                                {/* trailer *
-                                <div>
-                                    {
+                        {/* anime info */}
+                        <div>
+                            <h2>{animeInfo.title.romanji}</h2>
+                            <div>
+                                {
+                                    animeInfo.genres !== undefined || animeInfo.genres? animeInfo.genres.map((genre,index)=>{
+                                        if(index!==animeInfo.genres.length-1){
+                                            return(
+                                                <span className="md:text-xs text-grey w-full break-words" key={index}>{genre}, </span>
+                                            )
+                                        }else{
+                                            return(
+                                                <span className="md:text-xs text-grey w-full break-words" key={index}>{genre}</span>
+                                            )
+                                        }
+                                    }):null
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* right section */}
+
+                    <div>
+                        <div>
+                            {/* trailer section */}
+                            <div>
+                                {
                                         animeInfo.trailer !== undefined? <iframe
                                         className="video-iframe"
                                         src={animeInfo.trailer.replace("https://youtube.com/watch?v=","https://www.youtube.com/embed/")}
@@ -169,11 +229,11 @@ export function DownloadPage(){
                                         frameBorder="0"
                                         allowFullScreen
                                     /> : null
-                                    }
-                                </div>
-                        </div> */}
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
             </div>
         </div>
     )
