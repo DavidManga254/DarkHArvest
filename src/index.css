@@ -28,5 +28,15 @@
     .mainbar{
       @apply w-[95%] flex flex-row flex-wrap h-full overflow-y-scroll;
     }
+
+    .sidebarComponents{
+      @apply mb-10 text-grey;
+
+      &:hover{
+        @apply text-hoverColor cursor-pointer;
+      }
+
+    }
+    
 }
   

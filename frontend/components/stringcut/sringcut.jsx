@@ -15,13 +15,13 @@ const TruncatedText = ({ text, maxLength }) => {
 
   return (
     <div>
-      <div
+      <div className='text-white'
         dangerouslySetInnerHTML={{
           __html: truncatedText
         }}
       />
       {showToggle && (
-        <button onClick={toggleExpand}>
+        <button className='text-rateColor' onClick={toggleExpand}>
           {expanded ? 'Less' : 'More...'}
         </button>
       )}

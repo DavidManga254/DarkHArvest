@@ -20,25 +20,25 @@ export function SideBar({}){
 
                 {/* navigation section */}
                 <div>
-                    <div className="mb-10 text-grey w-fit hover:text-hoverColor">
+                    <div className="sidebarComponents">
                         <HomeIcon/>
                     </div>
-                    <div className="mb-10 text-grey">
+                    <div className="sidebarComponents">
                         <SearchIcon/>
                     </div>
-                    <div className="mb-10 text-grey">
+                    <div className="sidebarComponents">
                         <GridViewIcon/>
                     </div>
-                    <div className="mb-10 text-grey">
+                    <div className="sidebarComponents">
                         <FavoriteIcon/>
                     </div>
-                    <div className="mb-10 text-grey">
+                    <div className="sidebarComponents">
                         <CalendarMonthIcon/>
                     </div>
-                    <div className="mb-10 text-grey">
+                    <div className="sidebarComponents">
                         <CloudDownloadIcon/>
                     </div>
-                    <div className="mb-10 text-grey">
+                    <div className="sidebarComponents">
                         <VolunteerActivismIcon/>
                     </div>
                     
@@ -47,11 +47,11 @@ export function SideBar({}){
             </div>
             <div className="absolute bottom-0">
                 <div>
-                    <div className="mt-10 text-grey">
+                    <div className="mt-10 text-grey hover:text-hoverColor">
                         <PersonIcon/>
                     </div>
 
-                    <div className="mt-10 text-grey">
+                    <div className="mt-10 text-grey hover:text-hoverColor">
                         <SettingsIcon/>
                     </div>
                 </div>
