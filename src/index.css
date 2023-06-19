@@ -30,7 +30,7 @@
     }
 
     .sidebarComponents{
-      @apply mb-10 text-grey;
+      @apply mb-10 text-grey w-3/4 flex flex-row justify-center;
 
       &:hover{
         @apply text-hoverColor cursor-pointer;

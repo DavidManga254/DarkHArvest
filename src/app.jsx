@@ -1,27 +1,31 @@
 import * as React from 'react';
 import { RouterProvider } from 'react-router-dom';
 import {createRoot} from 'react-dom/client'
-import { routes } from '../frontend/routes/routes';
+// import { routes } from '../frontend/routes/routes';
+import { Routes } from 'react-router-dom';
 import "./app.css"
+import { Routeser } from '../frontend/routes/routes';
+import { Provider } from 'react-redux/es';
+import { Store } from '../frontend/reduxStore/createstore';
 
-const setHash = (hash) => {
-  window.location.hash = hash;
-};
 
 
 function App (){
   return(
     <React.StrictMode>
-       <RouterProvider router={routes} />
+       <Routeser/>
     </React.StrictMode>
   )
 }
 
 function render() {
   const root = createRoot(document.getElementById('root'))
-  root.render(<App/>);
+  root.render(
+    <Provider store={Store}>
+      <App/>
+    </Provider>
+  );
 }
-setHash('/main_window');
 
 render();
 

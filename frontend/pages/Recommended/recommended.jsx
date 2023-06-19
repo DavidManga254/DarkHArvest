@@ -4,21 +4,55 @@ import {useEffect,useState} from "react";
 import StarIcon from '@mui/icons-material/Star';
 import { SideBar } from "../../components/sidebar/sidebar.jsx";
 import { useNavigate } from 'react-router-dom';
+import { useDispatch,useSelector } from 'react-redux';
+import { Store } from "../../reduxStore/createstore";
 
 
 export function Recommended(){
-    const [animeList, setList] = useState(null);
+     const [animeList, setList] = useState(null);
     const navigate = useNavigate()
+    const dispatch = useDispatch();
+
+    //console.log("here is the state",Store.getState().ChangeStoreData.recommendedPage);
+
+    const recommendedData = useSelector(state => state.ChangeStoreData.recommendedPage);
+
+
+    useEffect(() => {
+        if (recommendedData === null) {
+          async function fetchData() {
+            try {
+              const apiResponse = await getTrendingAnime();
+              console.log("it is null")
+              //console.log("what we are dispatching is ",apiResponse)
+              dispatch({
+                type:"changeRecommendedData",
+                payload: apiResponse
+              });
+              setList(apiResponse);
+            } catch (error) {
+              console.error('Error fetching data:', error);
+            }
+          }
+    
+          fetchData();
+        }else{
+            console.log("well it was not null");
+            setList(recommendedData);
+        }
+      }, [dispatch, recommendedData]);
+
+
     //get trending anime
-    useEffect(()=>{
-        (async()=>{
-            let response = await getTrendingAnime();
-            // console.log("here is the reposne",response);
-            setList(response);
-            console.log(response);
-        })();
+    // useEffect(()=>{
+    //     (async()=>{
+    //         let response = await getTrendingAnime();
+    //         // console.log("here is the reposne",response);
+    //         setList(response);
+    //         console.log(response);
+    //     })();
         
-    },[]);
+    // },[]);
     //navigate function
     function navigateToDetails(animeData){
         navigate("/download",{
@@ -37,7 +71,7 @@ export function Recommended(){
                 {
                     animeList.map((anime,index)=>{
                         return(
-                            <div onClick={(()=>navigateToDetails(anime))} key={index} className="sm:w-[30%] md:w-[22%] lg:w-[15%] m-2 hover:cursor-pointer">
+                            <div onClick={(()=>navigateToDetails(anime))} key={index} className="sm:w-[30%] md:w-[22%] lg:w-[15%] m-2 hover:cursor-pointer hover:scale-150">
                                 <div className="relative w-full">
                                     <div className="absolute">
                                         <div className="rounded-3xl bg-rateBackground">

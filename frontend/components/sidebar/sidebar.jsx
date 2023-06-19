@@ -8,8 +8,28 @@ import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
 import SearchIcon from '@mui/icons-material/Search';
+import WestIcon from '@mui/icons-material/West';
+import EastIcon from '@mui/icons-material/East';
+import { useNavigate } from "react-router-dom";
 
 export function SideBar({}){
+    //navigat hook
+    const navigate = useNavigate();
+
+
+    const goBack = () => {
+        navigate(-1); // Navigate back to the previous route
+      };
+    
+      const goForward = () => {
+        const forwardRouteExists = true; // Replace with your logic to check if there is a forward route available
+    
+        if (forwardRouteExists) {
+          navigate(1); // Navigate forward to the next route
+        }
+      };
+    
+
     return(
         <div className="p-3  relative w-full h-full">
             <div>
@@ -41,6 +61,14 @@ export function SideBar({}){
                     <div className="sidebarComponents">
                         <VolunteerActivismIcon/>
                     </div>
+                    <div className="">
+                        <div>
+                            <WestIcon onClick={goBack}/>
+                        </div>
+                        <div>
+                            <EastIcon  onClick={goForward} />
+                        </div>
+                    </div>
                     
                 </div>
 
@@ -48,11 +76,11 @@ export function SideBar({}){
             <div className="absolute bottom-0">
                 <div>
                     <div className="mt-10 text-grey hover:text-hoverColor">
-                        <PersonIcon/>
+                        <PersonIcon  />
                     </div>
 
                     <div className="mt-10 text-grey hover:text-hoverColor">
-                        <SettingsIcon/>
+                        <SettingsIcon />
                     </div>
                 </div>
 
