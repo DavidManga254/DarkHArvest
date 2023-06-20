@@ -66,8 +66,9 @@ export function Routeser() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Recommended />} />
+        <Route path="/" element={<Homepage />} />
         <Route path="/download" element={<DownloadPage />} />
+        <Route path='/recommended' Component={<Recommended/>}/>
       </Routes>
     </Router>
   );

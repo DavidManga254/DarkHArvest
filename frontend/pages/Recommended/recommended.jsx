@@ -5,8 +5,7 @@ import StarIcon from '@mui/icons-material/Star';
 import { SideBar } from "../../components/sidebar/sidebar.jsx";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch,useSelector } from 'react-redux';
-import { Store } from "../../reduxStore/createstore";
-
+import { AnimeList } from "../../components/animelist/list.jsx";
 
 export function Recommended(){
      const [animeList, setList] = useState(null);
@@ -20,7 +19,7 @@ export function Recommended(){
 
     useEffect(() => {
         if (recommendedData === null) {
-          async function fetchData() {
+           async function fetchData() {
             try {
               const apiResponse = await getTrendingAnime();
               console.log("it is null")
@@ -40,7 +39,7 @@ export function Recommended(){
             console.log("well it was not null");
             setList(recommendedData);
         }
-      }, [dispatch, recommendedData]);
+      }, []);
 
 
     //get trending anime

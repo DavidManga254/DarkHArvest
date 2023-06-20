@@ -10,11 +10,23 @@ import PersonIcon from '@mui/icons-material/Person';
 import SearchIcon from '@mui/icons-material/Search';
 import WestIcon from '@mui/icons-material/West';
 import EastIcon from '@mui/icons-material/East';
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 
 export function SideBar({}){
     //navigat hook
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // console.log("here is the path",location.pathname);
+    
+    function navigateToLocation(path){
+        if(path === location.pathname){
+            return;
+        }
+        else{
+            navigate(path);
+        }
+    }
 
 
     const goBack = () => {
@@ -41,7 +53,7 @@ export function SideBar({}){
                 {/* navigation section */}
                 <div>
                     <div className="sidebarComponents">
-                        <HomeIcon/>
+                        <HomeIcon onClick={()=>navigateToLocation("/")} />
                     </div>
                     <div className="sidebarComponents">
                         <SearchIcon/>
@@ -61,7 +73,7 @@ export function SideBar({}){
                     <div className="sidebarComponents">
                         <VolunteerActivismIcon/>
                     </div>
-                    <div className="">
+                    <div className="sidebarComponents">
                         <div>
                             <WestIcon onClick={goBack}/>
                         </div>

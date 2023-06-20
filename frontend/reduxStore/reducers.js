@@ -7,6 +7,11 @@ export function ChangeStoreData(state=initialState,action){
                 ...initialState,
                 recommendedPage : action.payload
             }
+        case 'changeHomeoverData':
+            return {
+                ...initialState,
+                homePageCover : action.payload
+            }
         default:
             return initialState;
     }

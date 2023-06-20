@@ -1,16 +1,15 @@
 import { SplashScreen } from '../../components/splashscreen/splashpage.jsx'
 import * as React from 'react';
-import bleach from '../../assets/bleach.jpg'
-import aot from '../../assets/aot.jpg';
-import op from '../../assets/op.jpg';
-import death from '../../assets/dt.jpg';
-import kengan from '../../assets/ka.jpg';
-import demon from '../../assets/ds.jpg';
 //simport { ipcRenderer } from 'electron';
 import { searcher } from '../../../src/renderer.js';
-import { Navigate, useNavigate } from 'react-router-dom';
-
-
+import {useNavigate } from 'react-router-dom';
+import { SideBar } from '../../components/sidebar/sidebar.jsx';
+import { useState,useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTrendingAnime } from '../../../anilist-api/anilist-api.js';
+import TruncatedText from '../../components/stringcut/sringcut.jsx';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import { AnimeList } from '../../components/animelist/list.jsx';
 
 
 
@@ -18,6 +17,75 @@ import { Navigate, useNavigate } from 'react-router-dom';
 export function Homepage(){
     //navigate
     const navigate = useNavigate();
+
+    const [animeData, setList] = useState({
+        mainCoverAnime:null,
+        recommendedAnime:null
+
+    });
+    const [loader,setLoader] = useState(true)
+
+    const dispatch = useDispatch();
+
+    //take page data from redux store main cover anime, recommended data
+
+    const HomeDataCover = useSelector(state => state.ChangeStoreData.homePageCover);
+    const recommendedData = useSelector(state => state.ChangeStoreData.recommendedPage);
+
+
+    //check if exists in store
+    useEffect(() => {
+        if (recommendedData === null) {
+           async function fetchData() {
+            try {
+              let trendingApiResponse = await getTrendingAnime();
+                
+              //take number one trending
+              let trendingApiResponseCover = trendingApiResponse[0];
+
+              if(trendingApiResponseCover.bannerImage === null || trendingApiResponseCover.bannerImage === undefined){
+                let incrementor = 0;
+                while(trendingApiResponseCover.bannerImage === null || trendingApiResponseCover.bannerImage === undefined){
+                    trendingApiResponseCover = trendingApiResponse[incrementor];
+                    incrementor++;
+                }
+              }
+
+              //console.log("it is null")
+              //console.log("what we are dispatching is ",trendingApiResponse)
+
+              //store fetched data
+
+              dispatch({
+                type:"changeRecommendedData",
+                payload: trendingApiResponse
+              });
+
+              setList((previous)=>{
+                return{
+                    ...previous,
+                    mainCoverAnime : trendingApiResponseCover,
+                    recommendedAnime : trendingApiResponse
+                }
+              });
+            } catch (error) {
+              console.error('Error fetching data:', error);
+            }
+          }
+    
+          fetchData();
+        }else{
+            setList((previous)=>{
+                return{
+                    ...previous,
+                    mainCoverAnime : HomeDataCover,
+                    recommendedAnime : recommendedData
+                }
+            });
+            setLoader(false);
+
+        }
+      }, []);
 
     //function to take search request
     async function  handleSearchRequest(event){
@@ -34,67 +102,29 @@ export function Homepage(){
             }});
         }    
     }
-    return(
-        <div className="home-page bg-blue-500">
-            {/* <SplashScreen/> */}
-            <section className='home-section'>
-                <div className='search-bar'>
-                    <input type='text' onKeyDown={(event)=>handleSearchRequest(event)} placeholder='Search Anime'/>
+
+
+
+    return(<>
+    
+        {
+           animeData.recommendedAnime === null? <h2>Loading screen</h2> :<div className="page-layout">
+            <div className='sidebar'>
+                <SideBar/>
+            </div>
+            <div className='mainbar'>
+                {/* movie choice cover section */}
+                {/* animelist */}
+                <div>
+                    <AnimeList animeList={recommendedData}/>
                 </div>
-                <h2>Recommended</h2>
-                <section className='recommended'>
-
-                    <div className='recommend-anime'>
-                        <div className='image-section'>
-                            <img src={aot}/>
-                        </div>
-                        <h3>Attack on titan final season</h3>
-                    </div>
-
-                    <div className='recommend-anime'>
-                        
-                        
-                        <h3>One Piece</h3>
-                        <div className='image-section'>
-                            <img src={op}/>
-                        </div>
-                    </div>
-
-                    <div className='recommend-anime'>
-                        
-                        <h3>Bleach</h3>
-                        <div className='image-section'>
-                            <img src={bleach}/>
-                        </div>
-                    </div>
-
-                    <div className='recommend-anime'>
-                        
-                        <h3>Demon Slayer</h3>
-                        <div className='image-section'>
-                            <img src={demon}/>
-                        </div>
-                    </div>
-
-                    <div className='recommend-anime'>
-                        
-                        <h3>Death Note</h3>
-                        <div className='image-section'>
-                            <img src={death}/>
-                        </div>
-                    </div>
-
-                    <div className='recommend-anime'>
-                        
-                        <h3>Kengan Ashura</h3>
-                        <div className='image-section'>
-                            <img src={kengan}/>
-                        </div>
-                    </div>
 
 
-                </section>
-            </section>
+            </div>
         </div>
+        }
+    
+    </>
+        
     )
 }

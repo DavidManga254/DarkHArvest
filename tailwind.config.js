@@ -8,7 +8,8 @@ module.exports = {
         rateBackground:"#2D3240",
         rateColor:"#2EAEBE",
         grey:"#90939B",
-        hoverColor:"#2EAEBE"
+        hoverColor:"#2EAEBE",
+        greenColor : "#CAE962"
       }
     },
   },

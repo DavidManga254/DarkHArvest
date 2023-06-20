@@ -13,88 +13,11 @@ export function DownloadPage(){
     //location
     const location =useLocation();
 
-    // const [downloadOption, setDownloadOption] = useState("");
-    // const [rangeFrom, setRangeFrom] = useState("");
-    // const [rangeTo, setRangeTo] = useState("");
-
-    // const handleDownloadOptionChange = (event) => {
-    //     setDownloadOption(event.target.value);
-    // };
-
-    // const handleRangeFromChange = (event) => {
-    //     setRangeFrom(event.target.value);
-    // };
-
-    // const handleRangeToChange = (event) => {
-    //     setRangeTo(event.target.value);
-    // };
-
-    // const handleSubmit =async (event) => {
-    //     event.preventDefault();
-    //     console.log("Download Option:", downloadOption);
-    //     if (downloadOption === "range") {
-    //     console.log("Range From:", rangeFrom);
-    //     console.log("Range To:", rangeTo);
-    //     }
-    //     if(downloadOption==='all'){
-    //         await window.connect.downloadAnime({
-    //             start:1,
-    //             stop:undefined,
-    //             first:data.episode,
-    //             name:data.name
-    //         });
-    //     }else if(downloadOption ==='range'){
-    //         await window.connect.downloadAnime({
-    //             start:parseInt(rangeFrom),
-    //             stop:parseInt(rangeTo),
-    //             first:data.episode,
-    //             name:data.name
-    //         });
-    //     }
-    // };
-
     useEffect(()=>{
-        // (async()=>{
-        //     const response = await getTrendingAnime();
-        //     console.log(response)
-        // })();
+
         setAnimeInfo(location.state);
 
     },[]);
-    // const animeInfo = {
-    //     "title": {
-    //         "english": "Tengoku Daimakyo",
-    //         "romaji": "Tengoku Daimakyou"
-    //     },
-    //     "id": 155783,
-    //     "coverImage": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx155783-X23WQwPmI9Sh.jpg",
-    //     "bannerImage": "https://s4.anilist.co/file/anilistcdn/media/anime/banner/155783-MXHfdquIBoHA.jpg",
-    //     "status": "RELEASING",
-    //     "episodes": 13,
-    //     "season": "SPRING",
-    //     "description": "In the year 2024, the world has collapsed. Grotesque monsters lurk amongst the ruins of Japan, while remaining people scrape together what they can to survive. Kiruko, an odd-job girl in Nakano, accepts a mysterious woman's dying wish to take a boy named Maru to a place called Heaven.<br>\n<br>\n(Source: Disney+, edited)",
-    //     "meanScore": 81,
-    //     "genres": [
-    //         "Adventure",
-    //         "Mystery",
-    //         "Sci-Fi",
-    //         "Thriller"
-    //     ],
-    //     "studio": "Production I.G",
-    //     "rank": {
-    //         "popularity": 212,
-    //         "rating": 462,
-    //         "year": 0
-    //     },
-    //     "trailer": "https://youtube.com/watch?v=Sld5uW_BJU4",
-    //     "startDate": "1-4-2023",
-    //     "endDate": "24-6-2023",
-    //     "nextAiringEpisode": {
-    //         "timeUntilAiring": "7 days",
-    //         "airingOn": "16:00:00 24-06-2023",
-    //         "episode": 13
-    //     }
-    // }
     
     return(<>
     {
@@ -137,20 +60,20 @@ export function DownloadPage(){
                             </div>
                             <div className ="mb-2">
                                      {
-                                         animeInfo.studio !== undefined && animeInfo.studio? <div><span>Studio:</span>{animeInfo.studio}<span></span></div>:null
+                                         animeInfo.studio !== undefined && animeInfo.studio? <div><span>Studio: </span>{animeInfo.studio}<span></span></div>:null
                                      }
                             </div>
 
                             <div className ="mb-2">
                                     {
-                                     animeInfo.season !== undefined && animeInfo.season? <div><span>Season:</span>{animeInfo.season}<span></span></div>:null
+                                     animeInfo.season !== undefined && animeInfo.season? <div><span>Season: </span>{animeInfo.season}<span></span></div>:null
                                     }
                             </div>
 
                             <div className ="mb-2">
 
                                     {
-                                         animeInfo.status !== undefined && animeInfo.status?<div><span>Status:</span>{animeInfo.status}<span></span></div>:null
+                                         animeInfo.status !== undefined && animeInfo.status?<div><span>Status: </span>{animeInfo.status}<span></span></div>:null
                                      }
 
                             </div>
@@ -158,7 +81,7 @@ export function DownloadPage(){
                             <div className ="mb-2">
 
                                 {
-                                     animeInfo.nextAiringEpisode !== undefined && animeInfo.nextAiringEpisode?<div><span>Time to Air:</span><CountdownTimer targetDate={animeInfo.nextAiringEpisode.airingOn}/> <span></span></div>:null
+                                     animeInfo.nextAiringEpisode !== undefined && animeInfo.nextAiringEpisode?<div><span>Time to Air: </span><CountdownTimer targetDate={animeInfo.nextAiringEpisode.airingOn}/> <span></span></div>:null
                                 }
 
                             </div>
@@ -190,7 +113,15 @@ export function DownloadPage(){
                                         title="YouTube Video"
                                         allowFullScreen
                                     />
-                                        </div> : null
+                                        </div> : <div>
+                                            <h2 className="text-lg text-white">No Preview Available</h2>
+                                                <iframe
+                                        className="w-full aspect-video"
+                                        src={"https://www.youtube.com/embed/dQw4w9WgXcQ"}
+                                        title="YouTube Video"
+                                        allowFullScreen
+                                    />
+                                        </div>
                                 }
                             </div>
                         </div>
