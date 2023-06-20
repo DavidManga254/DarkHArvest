@@ -52,9 +52,19 @@ export function SideBar({}){
 
                 {/* navigation section */}
                 <div>
-                    <div className="sidebarComponents">
-                        <HomeIcon onClick={()=>navigateToLocation("/")} />
-                    </div>
+                    {
+                        location.pathname === "/" ? 
+
+                        <div className=" mb-10 text-hoverColor w-3/4 flex flex-row justify-center">
+                            <HomeIcon /> 
+                        </div>
+
+                        :
+                        <div className="sidebarComponents">
+                            <HomeIcon onClick={()=>navigateToLocation("/")} />
+                        </div>
+
+                    }
                     <div className="sidebarComponents">
                         <SearchIcon/>
                     </div>
