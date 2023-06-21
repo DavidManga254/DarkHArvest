@@ -8,6 +8,7 @@ const detailsModule = require('../webcrawler/animemodulee/animeDownload/details.
 const downloadModule = require('../webcrawler/animemodulee/animeDownload/downloadepisode.js')
 
 
+const  mainFavModule = require("./mainprocess/filemanagers/favouritesManager/favmanager.js");
 
 function doubleBackslashes(string) {
   let newString = string.replace(/\\/g, '\\\\'); // use regular expression to replace all occurrences
@@ -243,4 +244,9 @@ ipcMain.handle('get/details',async (event,args)=>{
 
 ipcMain.handle('download/anime',async (event,args)=>{
   await downloadModule.downloadAnime(args.start,args.stop,args.first,args.name,searchBrowser,searchPage)
+})
+
+ipcMain.handle("manageFavourite",async(event,args)=>{
+    //favourties module file manager
+    return await mainFavModule.mainFavManager(args);
 })

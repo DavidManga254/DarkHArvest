@@ -35,9 +35,6 @@
       &:hover{
         @apply text-hoverColor cursor-pointer;
       }
-      .sidebarActive{
-        @apply  mb-10 text-hoverColor w-3/4 flex flex-row justify-center;
-      }
 
     }
     

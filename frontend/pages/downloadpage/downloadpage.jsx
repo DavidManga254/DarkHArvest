@@ -6,19 +6,56 @@ import { SideBar } from "../../components/sidebar/sidebar.jsx";
 import { getTrendingAnime } from "../../../anilist-api/anilist-api.js";
 import TruncatedText from "../../components/stringcut/sringcut.jsx";
 import CountdownTimer from "../../components/countdown/countdown.jsx";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+
 //download page
 export function DownloadPage(){
     const [animeInfo,setAnimeInfo] = useState(null);
+    const [inFavourite,setFavouriteState] = useState(null);
 
     //location
     const location =useLocation();
 
+    async function checkFav(){
+        console.log("passing animeinfo",animeInfo)
+        await window.connect.manageFavourite({
+                    type :'checkExistence',
+                    payload : animeInfo
+        }).then((data)=>{
+            console.log("backedndndndndnd is", data);
+        })
+    }
+
     useEffect(()=>{
-
         setAnimeInfo(location.state);
-
-    },[]);
+        
+    },[])
     
+
+    checkFav();
+    // (async()=>{
+    //     await window.connect.manageFavourite({
+    //         type :'checkExistence',
+    //         payload : animeInfo
+    //     }).then((response)=>{
+            
+            
+    //         console.log("received backed is".response)
+    //         setFavouriteState(response)})
+    // })();
+
+    console.log("already in favs?",inFavourite);
+    
+
+    async function addFavourites(){
+        await window.connect.manageFavourite({
+            type:"addFavourite",
+            payload : animeInfo
+        }).then((data)=>{
+            console.log("has fav been added?",data);
+        })
+    }
+
     return(<>
     {
         //if anime info is null display loading screen
@@ -85,6 +122,11 @@ export function DownloadPage(){
                                 }
 
                             </div>
+                            
+                            <div className ="mb-2">
+                                <h2><FavoriteIcon onClick={addFavourites} className="hover:cursor-pointer hover:text-hoverColor" /></h2>
+                            </div>
+
                             
                         </div>
                     </div>
