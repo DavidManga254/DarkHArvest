@@ -9,7 +9,9 @@ module.exports.checkFavExistance = async (data)=>{
 
     try {
       const fileData = await fs.promises.readFile(favFilePath, "utf8");
-      if (fileData.includes(JSON.stringify(data))) {
+      // console.log(fileData);
+      // console.log("here is data",data)
+      if (fileData.includes(data)) {
         console.log("Data was found");
         return true;
       } else {

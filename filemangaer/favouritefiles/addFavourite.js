@@ -10,7 +10,7 @@ const favFilePath = "appstore/favs.txt";
 function writeToFile(data) {
   fs.writeFile(favFilePath, data, (err) => {
     if (err) throw err;
-    console.log('Data written to file.');
+    // console.log('Data written to file.');
   });
 }
 
@@ -22,47 +22,33 @@ function appendToFile(data) {
   
       // Check if the data already exists in the file
       if (fileData.includes(data)) {
-        console.log('Data already exists in the file.');
+        // console.log('Data already exists in the file.');
         return;
       } else {
         // Append the data to the file
         fs.appendFile(favFilePath, data + 'NextFavouriteAnime', (err) => {
           if (err) throw err;
-          console.log('Data appended to file.');
+          // console.log('Data appended to file.');
         });
       }
     });
   }
   
 
-// Function to remove specific data from a file
-function removeFromFile(data) {
-  fs.readFile(favFilePath, 'utf8', (err, fileData) => {
-    if (err) throw err;
-
-    const lines = fileData.split('\n');
-    const updatedData = lines.filter((line) => line !== data).join('\n');
-
-    fs.writeFile(favFilePath, updatedData, (err) => {
-      if (err) throw err;
-      console.log('Data removed from file.');
-    });
-  });
-}
 
 module.exports.addFavourite = (data) =>{
     try{
-        console.log("called");
+        // console.log("called");
         //check if file exists first
         if(fs.existsSync(favFilePath)){
             // console.log("already exists",data)
             //append the new fav to file
-            appendToFile(JSON.stringify(data));
+            appendToFile(data);
 
         }else{
             // console.log("not exist",data)
             //create file if it does not exist
-            writeToFile(JSON.stringify(data));
+            writeToFile(data);
         }
 
     }catch(err){

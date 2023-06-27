@@ -7,38 +7,73 @@ import { getTrendingAnime } from "../../../anilist-api/anilist-api.js";
 import TruncatedText from "../../components/stringcut/sringcut.jsx";
 import CountdownTimer from "../../components/countdown/countdown.jsx";
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import { Modal } from "../../components/modal/modal.jsx";
 
 //download page
 export function DownloadPage(){
     const [animeInfo,setAnimeInfo] = useState(null);
     const [inFavourite,setFavouriteState] = useState(null);
+    const [addFavVisible, setaddFavVisible] = useState(false);
+    const [removeFavVisible, setremoveFavVisible] = useState(false);
 
     //location
     const location =useLocation();
 
     
-
-    useEffect(()=>{
-        
-        
-        async function checkFav(){
-        console.log("passing animeinfo",location.state)
+    async function checkFav(){
+        //console.log("passing animeinfo",location.state)
         await window.connect.manageFavourite({
                     type :'checkExistence',
-                    payload : animeInfo
+                    payload : location.state
         }).then((data)=>{
             setFavouriteState(data);
         })
-        }
+
+    }
+
+    useEffect(()=>{
+        // console.log(location.state)
+        setAnimeInfo(location.state);
+        
+       
         (async()=>{
             await checkFav();   
         })();
 
-        setAnimeInfo(location.state);
+        
     },[])
     
-
     
+
+   
+    //control modal
+    useEffect(() => {
+        let timeoutId;
+
+        if (addFavVisible) {
+        timeoutId = setTimeout(() => {
+            setaddFavVisible(false);
+        }, 3000); // Delay for 3 seconds before hiding the child component
+        }
+
+        return () => {
+        clearTimeout(timeoutId);
+        };
+    }, [addFavVisible]);
+
+    useEffect(() => {
+        let timeoutId;
+
+        if (removeFavVisible) {
+        timeoutId = setTimeout(() => {
+            setremoveFavVisible(false);
+        }, 3000); // Delay for 3 seconds before hiding the child component
+        }
+
+        return () => {
+        clearTimeout(timeoutId);
+        };
+    }, [removeFavVisible]);
     // (async()=>{
     //     await window.connect.manageFavourite({
     //         type :'checkExistence',
@@ -60,6 +95,17 @@ export function DownloadPage(){
         }).then((data)=>{
             console.log("has fav been added?",data);
         })
+        setFavouriteState(true)
+        setaddFavVisible(true);
+    }
+
+    async function removeFavourite(){
+        await window.connect.manageFavourite({
+            type:"removeFavourite",
+            payload : location.state
+        })
+        setFavouriteState(false);
+        setremoveFavVisible(true)
     }
 
     return(<>
@@ -70,6 +116,12 @@ export function DownloadPage(){
         :
         //display page with anime info
         <div className="page-layout">
+            {
+                addFavVisible? <Modal modalInfo={`${animeInfo.title.romaji?animeInfo.title.romaji:animeInfo.title.english} added to favourites`} /> : null
+            }
+            {
+                removeFavVisible? <Modal modalInfo={`${animeInfo.title.romaji?animeInfo.title.romaji:animeInfo.title.english} removed from favourites`} /> : null
+            }
             <div className="sidebar">
                 <SideBar/>
             </div>
@@ -85,7 +137,7 @@ export function DownloadPage(){
                         </div>
                         {/* anime info */}
                         <div>
-                            <h1 className="text text-xl font-bold mb-2">{animeInfo.title.romaji}</h1>
+                            <h1 className="text text-xl font-bold mb-2">{animeInfo.title.romaji?animeInfo.title.romaji:animeInfo.title.english}</h1>
                             <div className ="mb-2">
                                 {
                                     animeInfo.genres !== undefined || animeInfo.genres? animeInfo.genres.map((genre,index)=>{
@@ -130,7 +182,14 @@ export function DownloadPage(){
                             </div>
                             
                             <div className ="mb-2">
-                                <h2><FavoriteIcon onClick={addFavourites} className="hover:cursor-pointer hover:text-hoverColor" /></h2>
+                                {
+                                    inFavourite === true? 
+
+                                    <h2><FavoriteIcon onClick={removeFavourite}  className="text-hoverColor hover:cursor-pointer" /></h2>
+
+                                    :
+                                    <h2><FavoriteIcon onClick={addFavourites} className="hover:cursor-pointer hover:text-hoverColor" /></h2>
+                                }
                             </div>
 
                             

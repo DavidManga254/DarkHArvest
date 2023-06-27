@@ -1,9 +1,10 @@
 const addfav = require("./addFavourite");
 const checkExist = require("./checkexistance");
-
-module.exports.favFilePath = "appstore/favs.txt";
+const removeFav = require('./removefavourite')
 
 module.exports.FavouriteModule ={
+    favFilePath :  "appstore/favs.txt",
     addFavourite : addfav.addFavourite,
-    checkExistence : checkExist.checkFavExistance
+    checkExistence : checkExist.checkFavExistance,
+    removeFavourite : removeFav.removeFromFile
 }
