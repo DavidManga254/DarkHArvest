@@ -8,6 +8,7 @@ const detailsModule = require('../webcrawler/animemodulee/animeDownload/details.
 const downloadModule = require('../webcrawler/animemodulee/animeDownload/downloadepisode.js')
 
 
+const  mainFavModule = require("./mainprocess/filemanagers/favouritesManager/favmanager.js");
 
 function doubleBackslashes(string) {
   let newString = string.replace(/\\/g, '\\\\'); // use regular expression to replace all occurrences
@@ -51,6 +52,7 @@ const createWindow = async () => {
     ],
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      webSecurity:false
     },
   
   });
@@ -58,6 +60,7 @@ const createWindow = async () => {
   // and load the index.html of the app.
   try{
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+    mainWindow.setMinimumSize(770,700)
   }catch(err){
     console.log('error loading app',err)
   }
@@ -241,4 +244,12 @@ ipcMain.handle('get/details',async (event,args)=>{
 
 ipcMain.handle('download/anime',async (event,args)=>{
   await downloadModule.downloadAnime(args.start,args.stop,args.first,args.name,searchBrowser,searchPage)
+})
+
+ipcMain.handle("manageFavourite",async(event,args)=>{
+    console.log("section 1 called")
+    //favourties module file manager
+    const response = await mainFavModule.mainFavManager(args);
+
+    return response;
 })
