@@ -16,23 +16,29 @@ export function DownloadPage(){
     //location
     const location =useLocation();
 
-    async function checkFav(){
-        console.log("passing animeinfo",animeInfo)
+    
+
+    useEffect(()=>{
+        
+        
+        async function checkFav(){
+        console.log("passing animeinfo",location.state)
         await window.connect.manageFavourite({
                     type :'checkExistence',
                     payload : animeInfo
         }).then((data)=>{
-            console.log("backedndndndndnd is", data);
+            setFavouriteState(data);
         })
-    }
+        }
+        (async()=>{
+            await checkFav();   
+        })();
 
-    useEffect(()=>{
         setAnimeInfo(location.state);
-        
     },[])
     
 
-    checkFav();
+    
     // (async()=>{
     //     await window.connect.manageFavourite({
     //         type :'checkExistence',

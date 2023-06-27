@@ -247,6 +247,9 @@ ipcMain.handle('download/anime',async (event,args)=>{
 })
 
 ipcMain.handle("manageFavourite",async(event,args)=>{
+    console.log("section 1 called")
     //favourties module file manager
-    return await mainFavModule.mainFavManager(args);
+    const response = await mainFavModule.mainFavManager(args);
+
+    return response;
 })

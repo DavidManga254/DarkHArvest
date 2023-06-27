@@ -5,17 +5,18 @@ const favFilePath ="appstore/favs.txt";
 
 
 module.exports.checkFavExistance = async (data)=>{
-    // console.log("received existance",data)
-    await fs.readFile(favFilePath, 'utf8', (err, fileData) => {
-        if (err) throw err;
-        // console.log("filedata is",fileData)
-    
-        // Check if the data already exists in the file
-        if (fileData.includes(JSON.stringify(data))) {
-            console.log("was found")
-          return true
-        } else {
-         return false
-        }
-      });
+    // read file list and check existance of data
+
+    try {
+      const fileData = await fs.promises.readFile(favFilePath, "utf8");
+      if (fileData.includes(JSON.stringify(data))) {
+        console.log("Data was found");
+        return true;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
 }

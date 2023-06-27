@@ -23,13 +23,12 @@ module.exports.mainFavManager = async(args)=>{
         
           //check if anime exists
           case "checkExistence":
-            console.log("checking existence of ",args);
             try{
-            //   let  s = await favModule.FavouriteModule.checkExistence(args.payload);
-            //     console.log("existance  mggfgdgdgdg?????", s)
-
-               
-                return await favModule.FavouriteModule.checkExistence(args.payload);
+              console.log("section 2 called")
+              //check existance of anime on saved list
+              const existanceBool = await favModule.FavouriteModule.checkExistence(args.payload);
+              console.log("existence bool is",existanceBool);
+              return existanceBool;
             }catch(err){
                 console.log(err);
             }

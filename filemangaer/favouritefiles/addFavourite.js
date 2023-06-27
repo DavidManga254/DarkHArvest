@@ -23,9 +23,10 @@ function appendToFile(data) {
       // Check if the data already exists in the file
       if (fileData.includes(data)) {
         console.log('Data already exists in the file.');
+        return;
       } else {
         // Append the data to the file
-        fs.appendFile(favFilePath, data + '\n', (err) => {
+        fs.appendFile(favFilePath, data + 'NextFavouriteAnime', (err) => {
           if (err) throw err;
           console.log('Data appended to file.');
         });
