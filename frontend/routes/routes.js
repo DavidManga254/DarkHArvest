@@ -61,6 +61,7 @@ import { Homepage } from '../pages/homepage/home.jsx';
 import { SearchResults } from '../pages/resultspage/results.jsx';
 import { DownloadPage } from '../pages/downloadpage/downloadpage.jsx';
 import { Recommended } from '../pages/Recommended/recommended.jsx';
+import { FavouritePage } from '../pages/favouritePage/favouritePage.jsx';
 
 export function Routeser() {
   return (
@@ -68,7 +69,7 @@ export function Routeser() {
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/download" element={<DownloadPage />} />
-        <Route path='/recommended' Component={<Recommended/>}/>
+        <Route path='/favourite' element={ <FavouritePage/> } />
       </Routes>
     </Router>
   );

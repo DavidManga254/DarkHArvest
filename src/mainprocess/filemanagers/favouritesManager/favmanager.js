@@ -42,5 +42,14 @@ module.exports.mainFavManager = async(args)=>{
           }catch(err){
             throw err;
           }
+        
+        case "retriveFavourite":
+          try{
+            const favList = await favModule.FavouriteModule.readFavourite();
+
+            return favList;
+          }catch(err){
+            throw(err);
+          }
       }
 }
