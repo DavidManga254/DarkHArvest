@@ -1,3 +1,5 @@
+import { json } from "express";
+
 const anilistApiEntrypoint = 'https://graphql.anilist.co';
 
 // Initialising global query variables
@@ -336,6 +338,79 @@ export class AnimeInformation {
    */
   genres: string[] | undefined;
 }
+/**
+ * Interface for type annotating json repsonse for single result
+ */
+interface JsonResponseForSingle {
+  data: {
+    Media: Media;
+  };
+}
+
+/**
+ * Interface for type annotating json response for multiple results
+ */
+interface JsonResponseForPage {
+  data: {
+    Page: Page;
+  }
+}
+
+/**
+ * Returned when response contains multiple pages, e.g search result
+ */
+
+interface Page {
+  media: Media[];
+}
+/**
+ * Returned when response has one result 
+ */
+interface Media {
+  id: string | null;
+  title: {
+    english: string | null;
+    romaji: string | null;
+  };
+  coverImage: {
+    large: string | null;
+  };
+  startDate: {
+    year: number | null;
+    month: number | null;
+    day: number | null;
+  };
+  endDate: {
+    year: number | null;
+    month: number | null;
+    day: number | null;
+  };
+  studios: {
+    nodes: {
+      name: string | null;
+    }[];
+  };
+  nextAiringEpisode: {
+    airingAt: number | null;
+    timeUntilAiring: number | null;
+    episode: number | null;
+  };
+  rankings: {
+    rank: number | null;
+    year: number | null;
+  }[];
+  trailer: {
+    site: string | null;
+    id: string | null;
+  };
+  bannerImage: string | null;
+  status: string | null;
+  episodes: number | null;
+  season: string | null;
+  description: string | null;
+  meanScore: number | null;
+  genres: string[] | null;
+}
 
   
 /** 
@@ -355,8 +430,8 @@ export async function searchAnime(query: string): Promise<AnimeInformation[] | E
             variables: {'query': query}
         })
     };
-    return fetch(anilistApiEntrypoint, options).then(handleResponse)
-    .then(handleMultipleResults)
+    return fetch(anilistApiEntrypoint, options).then(handlePageResponse)
+    .then(handlePageResult)
     .catch(handleError);
 }
 
@@ -376,8 +451,8 @@ export async function getTrendingAnime(): Promise<AnimeInformation[] | Error>{
             variables: {}
         })
     };
-    return fetch(anilistApiEntrypoint, options).then(handleResponse)
-    .then(handleMultipleResults)
+    return fetch(anilistApiEntrypoint, options).then(handlePageResponse)
+    .then(handlePageResult)
     .catch(handleError);
 }
 
@@ -398,7 +473,7 @@ export async function getAnimeByID(id: number): Promise<AnimeInformation | Error
             variables: {'id': id}
         })
     };
-    return fetch(anilistApiEntrypoint, options).then(handleResponse)
+    return fetch(anilistApiEntrypoint, options).then(handleSingleResponse)
     .then(handleResult)
     .catch(handleError);
 }
@@ -420,25 +495,32 @@ export async function getAnimeByTitle(title: string): Promise<AnimeInformation |
             variables: {'query': title}
         })
     };
-    return fetch(anilistApiEntrypoint, options).then(handleResponse)
+    return fetch(anilistApiEntrypoint, options).then(handleSingleResponse)
     .then(handleResult)
     .catch(handleError);
 }
 
-function handleResponse(response: Response) {
+function handleSingleResponse(response: Response): Promise< JsonResponseForSingle | never> {
     return response.json().then( (json)=> {
         if (response.ok) {return json;}
         return Promise.reject(json);
     });
 }
 
+function handlePageResponse(response: Response): Promise< JsonResponseForPage | never> {
+  return response.json().then(  (json)=> {
+    if (response.ok) {return json;}
+    return Promise.reject(json)
+  })
+}
+
 // Didn't specify JSON as type cause then I wouldn't be able to access the attributes cause the typescript compiler doesn't seem to understand JSON object attributes are dynamic
-function handleResult (json: any): AnimeInformation {
+function handleResult (json: JsonResponseForSingle): AnimeInformation {
     const result = json['data']['Media'];
     return createAnimeInformationObject(result);
 }
 
-function handleMultipleResults(json: any): AnimeInformation[] {
+function handlePageResult(json: JsonResponseForPage): AnimeInformation[] {
     let animeInfoList: AnimeInformation[] = [];
     const results = json['data']['Page']['media'];
     for (const result of results){
@@ -479,7 +561,7 @@ function applyFunctionIfNotUndefined(obj: any, func: Function): any  {
 // Does nothing lol, used when no transformation is to be applied to the item before it is loaded into animeInformation as an attribute
 function doNothing(obj: any): any{return obj;}
 
-function createAnimeInformationObject (json: any): AnimeInformation {
+function createAnimeInformationObject (json: Media): AnimeInformation {
     let animeInfo = new AnimeInformation();
 
     animeInfo.title = {english: applyFunctionIfNotUndefined(json['title']['english'], doNothing), romaji: applyFunctionIfNotUndefined(json['title']['romaji'], doNothing)}
@@ -518,7 +600,7 @@ function createAnimeInformationObject (json: any): AnimeInformation {
 
 // TESTS ( ALL PASSED TESTS ) 🐐
 
-// searchAnime('Bleach').then( (results) => { console.log(results) });
+//searchAnime('Bleach').then( (results) => { console.log(results) });
 // getTrendingAnime().then( (results) => { console.log(results) });
 // getAnimeByID(20).then( (result) => { console.log(result) }); // Naruto's ID is 20 on the anilist database
-// getAnimeByTitle('jujutsu season').then( (result) => { console.log(result) });
+// `getAnimeByTitle('jujutsu season').then( (result) => { console.log(result) });

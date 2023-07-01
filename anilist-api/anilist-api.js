@@ -36,20 +36,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAnimeByTitle = exports.getAnimeByID = exports.getTrendingAnime = exports.searchAnime = void 0;
+exports.getAnimeByTitle = exports.getAnimeByID = exports.getTrendingAnime = exports.searchAnime = exports.AnimeInformation = void 0;
 var anilistApiEntrypoint = 'https://graphql.anilist.co';
 // Initialising global query variables
 var getAnimeByIDQuery = "\n# Retrieves the anime matching the provided id, returns a result\nquery getAnimeByID($id: Int) {\n  Media(id: $id, type: ANIME) {\n    # ...AnimeInfomation\n    id\n    title {\n      english \n      romaji\n    }\n    coverImage {\n      large\n    }\n    startDate {\n      year\n      month\n      day\n    }\n    endDate {\n      year\n      month\n      day\n    }\n    studios(isMain: true) {\n      nodes {\n        name\n      }\n    }\n    nextAiringEpisode { \n      airingAt\n      timeUntilAiring\n      episode\n    }\n    rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n      rank\n      year\n    }\n    trailer { \n      site\n      id\n    }\n    bannerImage\n    status\n    episodes\n    season\n    description\n    meanScore\n    genres\n    }\n}\n";
 var getAnimeByTitleQuery = "\n# Retrieves the FIRST search result of the anime matching the provided title, returns the FIRST search result\nquery getAnimeByTitle($query: String) {\n    Media(search: $query, type: ANIME) {\n      # ...AnimeInfomation\n      id\n      title {\n        english \n        romaji\n      }\n      coverImage {\n        large\n      }\n      startDate {\n        year\n        month\n        day\n      }\n      endDate {\n        year\n        month\n        day\n      }\n      studios(isMain: true) {\n        nodes {\n          name\n        }\n      }\n      nextAiringEpisode { \n        airingAt\n        timeUntilAiring\n        episode\n      }\n      rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n        rank\n        year\n      }\n      trailer { \n        site\n        id\n      }\n      bannerImage\n      status\n      episodes\n      season\n      description\n      meanScore\n      genres\n    }\n}\n";
 var searchAnimeQuery = "\n# Searches for the specified anime, returns a list of ALL the search results\nquery searchAnime($query: String) {\n  Page {\n    media(search: $query, type: ANIME) {\n      # ...AnimeInfomation\n      id\n      title {\n        english \n        romaji\n      }\n      coverImage {\n        large\n      }\n      startDate {\n        year\n        month\n        day\n      }\n      endDate {\n        year\n        month\n        day\n      }\n      studios(isMain: true) {\n        nodes {\n          name\n        }\n      }\n      nextAiringEpisode { \n        airingAt\n        timeUntilAiring\n        episode\n      }\n      rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n        rank\n        year\n      }\n      trailer { \n        site\n        id\n      }\n      bannerImage\n      status\n      episodes\n      season\n      description\n      meanScore\n      genres\n      }\n    }\n}\n";
-var getTrendingAnimeQuery = "\n# Retrieves the trending anime, returns a list of the trending anime\nquery getTrendingAnime{\n  Page {\n    media(sort: TRENDING_DESC, type: ANIME) {\n      # ...AnimeInfomation\n      id\n      title {\n        english \n        romaji\n      }\n      coverImage {\n        large\n      }\n      startDate {\n        year\n        month\n        day\n      }\n      endDate {\n        year\n        month\n        day\n      }\n      studios(isMain: true) {\n        nodes {\n          name\n        }\n      }\n      nextAiringEpisode { \n        airingAt\n        timeUntilAiring\n        episode\n      }\n      rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n        rank\n        year\n      }\n      trailer { \n        site\n        id\n      }\n      bannerImage\n      status\n      episodes\n      season\n      description\n      meanScore\n      genres\n      }\n  }\n}\n";
-// Contains details and information of an anime, sourced from anilist
-// Almost all of these attributes can be undefined for cases where the detail isn't contained in their database
+var getTrendingAnimeQuery = "\n# Retrieves the trending anime, returns a list of the trending anime\nquery getTrendingAnime{\n  Page {\n    media(sort: TRENDING_DESC, type: ANIME) {\n      # ...AnimeInfomation\n      id\n      title {\n        english \n        romaji\n      }\n      coverImage {\n        large\n      }\n      startDate {\n        year\n        month\n        day\n      }\n      endDate {\n        year\n        month\n        day\n      }\n      studios(isMain: true) {\n        nodes {\n          name\n        }\n      }\n      nextAiringEpisode { \n        airingAt\n        timeUntilAiring\n        episode\n      }\n      rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n        rank\n        year\n      }\n      trailer { \n        site\n        id\n      }\n      bannerImage\n      status\n      episodes\n      season\n      description\n      meanScore\n      genres\n      }\n  }\n}\n"; /**
+ * Contains details and information of an anime, sourced from AniList.
+ * Almost all of these attributes can be undefined for cases where the detail isn't contained in their database.
+ */
 var AnimeInformation = /** @class */ (function () {
     function AnimeInformation() {
     }
     return AnimeInformation;
 }());
+exports.AnimeInformation = AnimeInformation;
 /**
  * Searches for the anime by the provided query
  * @param {string} query - The search query string.
@@ -70,8 +72,8 @@ function searchAnime(query) {
                     variables: { 'query': query }
                 })
             };
-            return [2 /*return*/, fetch(anilistApiEntrypoint, options).then(handleResponse)
-                    .then(handleMultipleResults)
+            return [2 /*return*/, fetch(anilistApiEntrypoint, options).then(handlePageResponse)
+                    .then(handlePageResult)
                     .catch(handleError)];
         });
     });
@@ -96,8 +98,8 @@ function getTrendingAnime() {
                     variables: {}
                 })
             };
-            return [2 /*return*/, fetch(anilistApiEntrypoint, options).then(handleResponse)
-                    .then(handleMultipleResults)
+            return [2 /*return*/, fetch(anilistApiEntrypoint, options).then(handlePageResponse)
+                    .then(handlePageResult)
                     .catch(handleError)];
         });
     });
@@ -105,6 +107,7 @@ function getTrendingAnime() {
 exports.getTrendingAnime = getTrendingAnime;
 /**
  * Retrieves an anime that has the provided id
+ * @param {number} id the ID of the chosen anime
  * @returns {(AnimeInformation | Error)} An  {@link AnimeInformation} object or an {@link Error}.
  */
 function getAnimeByID(id) {
@@ -122,7 +125,7 @@ function getAnimeByID(id) {
                     variables: { 'id': id }
                 })
             };
-            return [2 /*return*/, fetch(anilistApiEntrypoint, options).then(handleResponse)
+            return [2 /*return*/, fetch(anilistApiEntrypoint, options).then(handleSingleResponse)
                     .then(handleResult)
                     .catch(handleError)];
         });
@@ -131,6 +134,7 @@ function getAnimeByID(id) {
 exports.getAnimeByID = getAnimeByID;
 /**
  * Retrieves an anime that has the provided title
+ * @param {string} title the title of the anime
  * @returns {(AnimeInformation | Error)} An  {@link AnimeInformation} object or an {@link Error}.
  */
 function getAnimeByTitle(title) {
@@ -148,14 +152,22 @@ function getAnimeByTitle(title) {
                     variables: { 'query': title }
                 })
             };
-            return [2 /*return*/, fetch(anilistApiEntrypoint, options).then(handleResponse)
+            return [2 /*return*/, fetch(anilistApiEntrypoint, options).then(handleSingleResponse)
                     .then(handleResult)
                     .catch(handleError)];
         });
     });
 }
 exports.getAnimeByTitle = getAnimeByTitle;
-function handleResponse(response) {
+function handleSingleResponse(response) {
+    return response.json().then(function (json) {
+        if (response.ok) {
+            return json;
+        }
+        return Promise.reject(json);
+    });
+}
+function handlePageResponse(response) {
     return response.json().then(function (json) {
         if (response.ok) {
             return json;
@@ -168,7 +180,7 @@ function handleResult(json) {
     var result = json['data']['Media'];
     return createAnimeInformationObject(result);
 }
-function handleMultipleResults(json) {
+function handlePageResult(json) {
     var animeInfoList = [];
     var results = json['data']['Page']['media'];
     for (var _i = 0, results_1 = results; _i < results_1.length; _i++) {
@@ -245,7 +257,7 @@ function createAnimeInformationObject(json) {
     return animeInfo;
 }
 // TESTS ( ALL PASSED TESTS ) 🐐
-// searchAnime('Bleach').then( (results) => { console.log(results) });
+//searchAnime('Bleach').then( (results) => { console.log(results) });
 // getTrendingAnime().then( (results) => { console.log(results) });
 // getAnimeByID(20).then( (result) => { console.log(result) }); // Naruto's ID is 20 on the anilist database
-// getAnimeByTitle('jujutsu season').then( (result) => { console.log(result) });
+// `getAnimeByTitle('jujutsu season').then( (result) => { console.log(result) });
