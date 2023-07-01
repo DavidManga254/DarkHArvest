@@ -219,6 +219,10 @@ query getTrendingAnime{
   }
 }
 `;
+const getGenreCollectionQuery = `query getGenres{
+  GenreCollection
+}`
+
 /**
  * Contains details and information of an anime, sourced from AniList.
  * Almost all of these attributes can be undefined for cases where the detail isn't contained in their database.
@@ -413,6 +417,11 @@ interface Media {
   genres: string[] | null;
 }
 
+interface JsonGenreCollection{
+  data: {
+    GenreCollection: string[]
+  }
+}
 
 
 function createOptions(query: string, variables: object) {
@@ -424,6 +433,24 @@ function createOptions(query: string, variables: object) {
     },
     body: JSON.stringify({query, variables}),
   };
+}
+
+async function getGenreCollection(): Promise<string[] | Error>{
+  const options = createOptions(getGenreCollectionQuery, {})
+  return fetch(anilistApiEntrypoint, options).then(handleGenreCollectionResponse)
+  .then(handleGenreCollectionResult)
+  .catch(handleError)
+}
+
+function handleGenreCollectionResponse(response: Response): Promise<JsonGenreCollection | never> {
+  return response.json().then( (json)=>{
+    if (response.ok){ return json}
+    else { return Promise.reject(json)}
+  })
+}
+
+function handleGenreCollectionResult(json: JsonGenreCollection): string[] {
+  return json['data']['GenreCollection']
 }
   
 /** 
@@ -573,7 +600,7 @@ function createAnimeInformationObject (json: Media): AnimeInformation {
 }
 
 // TESTS ( ALL PASSED TESTS ) 🐐
-
+// getGenreCollection().then( (genres)=>{console.log(genres)})
 // searchAnime('Bleach').then( (results) => { console.log(results) });
 // getTrendingAnime().then( (results) => { console.log(results) });
 // getAnimeByID(20).then( (result) => { console.log(result) }); // Naruto's ID is 20 on the anilist database
