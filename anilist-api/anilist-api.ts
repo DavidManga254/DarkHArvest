@@ -218,7 +218,8 @@ query getTrendingAnime{
       }
   }
 }
-`;/**
+`;
+/**
  * Contains details and information of an anime, sourced from AniList.
  * Almost all of these attributes can be undefined for cases where the detail isn't contained in their database.
  */
@@ -412,6 +413,18 @@ interface Media {
   genres: string[] | null;
 }
 
+
+
+function createOptions(query: string, variables: object) {
+  return {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify({query, variables}),
+  };
+}
   
 /** 
  * Searches for the anime by the provided query
@@ -419,17 +432,7 @@ interface Media {
  * @returns {(AnimeInformation | Error)} An array of  {@link AnimeInformation} objects or an {@link Error}.
  */
 export async function searchAnime(query: string): Promise<AnimeInformation[] | Error> {
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-            query: searchAnimeQuery,
-            variables: {'query': query}
-        })
-    };
+    const options = createOptions(searchAnimeQuery, {'query': query})
     return fetch(anilistApiEntrypoint, options).then(handlePageResponse)
     .then(handlePageResult)
     .catch(handleError);
@@ -440,17 +443,7 @@ export async function searchAnime(query: string): Promise<AnimeInformation[] | E
  * @returns {(AnimeInformation | Error)} An array {@link AnimeInformation} objects or an {@link Error}.
  */
 export async function getTrendingAnime(): Promise<AnimeInformation[] | Error>{
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-            query: getTrendingAnimeQuery,
-            variables: {}
-        })
-    };
+    const options = createOptions(getTrendingAnimeQuery, {})
     return fetch(anilistApiEntrypoint, options).then(handlePageResponse)
     .then(handlePageResult)
     .catch(handleError);
@@ -462,17 +455,7 @@ export async function getTrendingAnime(): Promise<AnimeInformation[] | Error>{
  * @returns {(AnimeInformation | Error)} An  {@link AnimeInformation} object or an {@link Error}.
  */
 export async function getAnimeByID(id: number): Promise<AnimeInformation | Error> {
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-            query: getAnimeByIDQuery,
-            variables: {'id': id}
-        })
-    };
+    const options = createOptions(getAnimeByIDQuery, {'id': id})
     return fetch(anilistApiEntrypoint, options).then(handleSingleResponse)
     .then(handleResult)
     .catch(handleError);
@@ -484,21 +467,12 @@ export async function getAnimeByID(id: number): Promise<AnimeInformation | Error
  * @returns {(AnimeInformation | Error)} An  {@link AnimeInformation} object or an {@link Error}.
  */
 export async function getAnimeByTitle(title: string): Promise<AnimeInformation | Error> {
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-            query: getAnimeByTitleQuery,
-            variables: {'query': title}
-        })
-    };
+    const options = createOptions(getAnimeByTitleQuery, {'query': title})
     return fetch(anilistApiEntrypoint, options).then(handleSingleResponse)
     .then(handleResult)
     .catch(handleError);
 }
+
 
 function handleSingleResponse(response: Response): Promise< JsonResponseForSingle | never> {
     return response.json().then( (json)=> {
@@ -600,7 +574,7 @@ function createAnimeInformationObject (json: Media): AnimeInformation {
 
 // TESTS ( ALL PASSED TESTS ) 🐐
 
-//searchAnime('Bleach').then( (results) => { console.log(results) });
+// searchAnime('Bleach').then( (results) => { console.log(results) });
 // getTrendingAnime().then( (results) => { console.log(results) });
 // getAnimeByID(20).then( (result) => { console.log(result) }); // Naruto's ID is 20 on the anilist database
-// `getAnimeByTitle('jujutsu season').then( (result) => { console.log(result) });
+// getAnimeByTitle('Jujutsu Kaisen Season 2').then( (result) => { console.log(result) });

@@ -254,4 +254,7 @@ query getTrendingAnime{
   }
 }
 
+query getGenres{
+  GenreCollection
+}
 
