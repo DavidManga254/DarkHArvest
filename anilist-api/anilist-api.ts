@@ -162,12 +162,10 @@ query searchAnime($query: String) {
       genres
       }
     }
-}
-`;
+}`;
 
 const getTrendingAnimeQuery: string = 
 `
-# Retrieves the trending anime, returns a list of the trending anime
 query getTrendingAnime{
   Page {
     media(sort: TRENDING_DESC, type: ANIME) {
@@ -219,9 +217,114 @@ query getTrendingAnime{
   }
 }
 `;
-const getGenreCollectionQuery = `query getGenres{
+const getGenreCollectionQuery = 
+`query getGenres{
   GenreCollection
-}`
+}`;
+
+const getAnimeByGenreQuery = 
+`query getAnimeByGenre($genre: String, $season: MediaSeason, $seasonYear: Int){
+    Page{
+      media(genre: $genre, season: $season, seasonYear: $seasonYear,type: ANIME){
+    # ...AnimeInfomation
+          id
+          title {
+            english # Can be EMPTY
+            romaji
+          }
+          coverImage {
+            large
+          }
+          startDate {
+            year
+            month
+            day
+          }
+          endDate {
+            year
+            month
+            day
+          }
+          studios(isMain: true) {
+            nodes {
+              name
+            }
+          }
+          nextAiringEpisode { # Can be EMPTY
+            airingAt
+            timeUntilAiring
+            episode
+          }
+          rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
+            rank
+            year
+          }
+          trailer { # Can be EMPTY
+            site
+            id
+          }
+          bannerImage
+          status
+          episodes
+          season
+          description
+          meanScore
+          genres
+          }
+      }
+  }`;
+
+const getAnimeBySeasonAndYearQuery = 
+`query getAnimeBySeasonAndYear($season: MediaSeason, $seasonYear: Int){
+  	Page{
+      media(season: $season, seasonYear: $seasonYear, type: ANIME){
+          # ...AnimeInfomation
+        id
+        title {
+          english # Can be EMPTY
+          romaji
+        }
+        coverImage {
+          large
+        }
+        startDate {
+          year
+          month
+          day
+        }
+        endDate {
+          year
+          month
+          day
+        }
+        studios(isMain: true) {
+          nodes {
+            name
+          }
+        }
+        nextAiringEpisode { # Can be EMPTY
+          airingAt
+          timeUntilAiring
+          episode
+        }
+        rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
+          rank
+          year
+        }
+        trailer { # Can be EMPTY
+          site
+          id
+        }
+        bannerImage
+        status
+        episodes
+        season
+        description
+        meanScore
+        genres
+        }
+    } 
+}`;
 
 /**
  * Contains details and information of an anime, sourced from AniList.
@@ -423,6 +526,19 @@ interface JsonGenreCollection{
   }
 }
 
+const date = new Date()
+/**
+ * The current year
+ */
+export const currentYear = date.getFullYear()
+/**
+ * Array of seasons
+ */
+export const seasons = ['WINTER', 'SPRING', 'SUMMER', 'FALL']
+/**
+ * The current season
+ */
+export const currentSeason = seasons[Math.floor((date.getMonth()+1) / 3) % 4]
 
 function createOptions(query: string, variables: object) {
   return {
@@ -435,7 +551,73 @@ function createOptions(query: string, variables: object) {
   };
 }
 
-async function getGenreCollection(): Promise<string[] | Error>{
+/**
+ * Retrieves a list of anime that aired/will air by the provided season and year
+ * @param season The season the anime aired/will air, can be one of
+ * 'WINTER',
+ * 'SPRING'.
+ * 'SUMMER',
+ * 'FALL'
+ * @param seasonYear The year the anime aired/will air
+ * @returns {(AnimeInformation[] | Error)} An array of {@link AnimeInformation} objects or an {@link Error}
+ */
+export async function getAnimeBySeasonAndYear(season: string, seasonYear: number): Promise<AnimeInformation[] | Error> {
+    const options = createOptions(getAnimeBySeasonAndYearQuery, {'season': season, 'seasonYear': seasonYear})
+    return fetch(anilistApiEntrypoint, options).then(handlePageResponse)
+    .then(handlePageResult)
+    .catch(handleError)  
+}
+
+/**
+ * Retrieves a list of anime that are airing/will air in the current season
+ * @returns {(AnimeInformation[] | Error)} An array of {@link AnimeInformation} objects or an {@link Error}
+ */
+export async function getCurrentSeasonAnime(): Promise<AnimeInformation[] | Error> {
+    return getAnimeBySeasonAndYear(currentSeason, currentYear)
+}
+
+/**
+ * Retrieves a list of anime that have the provided genre
+ * @param genre The genre of the anime, can be one of 
+      'Action',
+      'Adventure',
+      'Comedy',
+      'Drama',
+      'Ecchi',
+      'Fantasy',
+      'Hentai',
+      'Horror',
+      'Mahou ',
+      'Mecha',
+      'Music',
+      'Mystery',
+      'Psychological',
+      'Romance',
+      'Sci-Fi',
+      'Slice of Life',
+      'Sports',
+      'Supernatural',
+      'Thriller'.
+ * @param season The season the anime aired/will air, can be one of
+      'WINTER',
+      'SPRING',
+      'SUMMER',
+      'FALL'.
+ * @param seasonYear The year the anime aired/will air
+ * @returns {(AnimeInformation[] | Error)} An array of {@link AnimeInformation} objects or an {@link Error}
+ */
+export  async function getAnimeByGenre(genre: string, season: string, seasonYear: number): Promise<AnimeInformation[] | Error> {
+  const options = createOptions(getAnimeByGenreQuery, {'genre': genre, 'season': season, 'seasonYear': seasonYear})
+  return fetch(anilistApiEntrypoint, options).then(handlePageResponse)
+  .then(handlePageResult)
+  .catch(handleError)
+}
+
+/**
+ * Retrieves a list of genres available on the anilist database
+ * @returns {(string[] | Error)} an array of strings representing the genres or an {@link Error}
+ */
+export async function getGenreCollection(): Promise<string[] | Error>{
   const options = createOptions(getGenreCollectionQuery, {})
   return fetch(anilistApiEntrypoint, options).then(handleGenreCollectionResponse)
   .then(handleGenreCollectionResult)
@@ -456,7 +638,7 @@ function handleGenreCollectionResult(json: JsonGenreCollection): string[] {
 /** 
  * Searches for the anime by the provided query
  * @param {string} query - The search query string.
- * @returns {(AnimeInformation | Error)} An array of  {@link AnimeInformation} objects or an {@link Error}.
+ * @returns {(AnimeInformation[] | Error)} An array of  {@link AnimeInformation} objects or an {@link Error}.
  */
 export async function searchAnime(query: string): Promise<AnimeInformation[] | Error> {
     const options = createOptions(searchAnimeQuery, {'query': query})
@@ -466,8 +648,8 @@ export async function searchAnime(query: string): Promise<AnimeInformation[] | E
 }
 
 /** 
- * Gets a list of the current trending anime
- * @returns {(AnimeInformation | Error)} An array {@link AnimeInformation} objects or an {@link Error}.
+ * Retrieves a list of the current trending anime
+ * @returns {(AnimeInformation[] | Error)} An array of {@link AnimeInformation} objects or an {@link Error}.
  */
 export async function getTrendingAnime(): Promise<AnimeInformation[] | Error>{
     const options = createOptions(getTrendingAnimeQuery, {})
@@ -600,6 +782,10 @@ function createAnimeInformationObject (json: Media): AnimeInformation {
 }
 
 // TESTS ( ALL PASSED TESTS ) 🐐
+
+// getCurrentSeasonAnime().then((results)=>{console.log(results)})
+// getAnimeByGenre('Action', 'SUMMER', 2023).then( (results)=>{console.log(results)})
+// getAnimeBySeasonAndYear('SPRING', 2021).then( (results)=>{console.log(results)})
 // getGenreCollection().then( (genres)=>{console.log(genres)})
 // searchAnime('Bleach').then( (results) => { console.log(results) });
 // getTrendingAnime().then( (results) => { console.log(results) });

@@ -258,3 +258,105 @@ query getGenres{
   GenreCollection
 }
 
+query getAnimeByGenre($genre: String, $season: MediaSeason, $seasonYear: Int){
+  Page{
+    media(genre: $genre, season: $season, seasonYear: $seasonYear,type: ANIME){
+  # ...AnimeInfomation
+        id
+        title {
+          english # Can be EMPTY
+          romaji
+        }
+        coverImage {
+          large
+        }
+        startDate {
+          year
+          month
+          day
+        }
+        endDate {
+          year
+          month
+          day
+        }
+        studios(isMain: true) {
+          nodes {
+            name
+          }
+        }
+        nextAiringEpisode { # Can be EMPTY
+          airingAt
+          timeUntilAiring
+          episode
+        }
+        rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
+          rank
+          year
+        }
+        trailer { # Can be EMPTY
+          site
+          id
+        }
+        bannerImage
+        status
+        episodes
+        season
+        description
+        meanScore
+        genres
+        }
+    }
+}
+
+query getAnimeBySeasonAndYear($season: MediaSeason, $seasonYear: Int){
+  	Page{
+      media(season: $season, seasonYear: $seasonYear, type: ANIME){
+          # ...AnimeInfomation
+        id
+        title {
+          english # Can be EMPTY
+          romaji
+        }
+        coverImage {
+          large
+        }
+        startDate {
+          year
+          month
+          day
+        }
+        endDate {
+          year
+          month
+          day
+        }
+        studios(isMain: true) {
+          nodes {
+            name
+          }
+        }
+        nextAiringEpisode { # Can be EMPTY
+          airingAt
+          timeUntilAiring
+          episode
+        }
+        rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
+          rank
+          year
+        }
+        trailer { # Can be EMPTY
+          site
+          id
+        }
+        bannerImage
+        status
+        episodes
+        season
+        description
+        meanScore
+        genres
+        }
+    }
+    
+}
