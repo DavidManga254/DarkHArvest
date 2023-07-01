@@ -39,7 +39,7 @@ getAnimeByID(20).then( (animeInfos: AnimeInformation | Error ) => { console.log(
 - Returns a single [`AnimeInformation`](#animeinformation) object or an `Error`
 
 ## Others
-- getCurrentSeasonAnime - get list anime airing/that will air in the current season
+- getCurrentSeasonAnime - get list of anime airing/that will air in the current season
 - getAnimeBySeasonAndYear - get list of anime by a season and year
 - getAnimeByGenre - get list of anime that have a the provided genre 
 - getGenreCollection - get a list of genres available on the anilist database
