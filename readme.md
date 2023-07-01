@@ -2,7 +2,7 @@
 # Installation
 **1.Clone the repository:**
 
-`git clone https://github.com/DavidManga254/gamify-game-app.git`
+`git clone https://github.com/DavidManga254/DarkHArvest.git`
 
 **2.Install the dependencies:**
 
