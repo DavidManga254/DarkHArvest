@@ -39,13 +39,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAnimeByTitle = exports.getAnimeByID = exports.getTrendingAnime = exports.searchAnime = exports.getGenreCollection = exports.getAnimeByGenre = exports.getCurrentSeasonAnime = exports.getAnimeBySeasonAndYear = exports.currentSeason = exports.seasons = exports.currentYear = exports.AnimeInformation = void 0;
 var anilistApiEntrypoint = 'https://graphql.anilist.co';
 // Initialising global query variables
-var getAnimeByIDQuery = "\n# Retrieves the anime matching the provided id, returns a result\nquery getAnimeByID($id: Int) {\n  Media(id: $id, type: ANIME) {\n    # ...AnimeInfomation\n    id\n    title {\n      english \n      romaji\n    }\n    coverImage {\n      large\n    }\n    startDate {\n      year\n      month\n      day\n    }\n    endDate {\n      year\n      month\n      day\n    }\n    studios(isMain: true) {\n      nodes {\n        name\n      }\n    }\n    nextAiringEpisode { \n      airingAt\n      timeUntilAiring\n      episode\n    }\n    rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n      rank\n      year\n    }\n    trailer { \n      site\n      id\n    }\n    bannerImage\n    status\n    episodes\n    season\n    description\n    meanScore\n    genres\n    }\n}\n";
+var getAnimeByIDQuery = "\nquery getAnimeByID($id: Int) {\n  Media(id: $id, type: ANIME) {\n    # ...AnimeInfomation\n    id\n    title {\n      english \n      romaji\n    }\n    coverImage {\n      large\n    }\n    startDate {\n      year\n      month\n      day\n    }\n    endDate {\n      year\n      month\n      day\n    }\n    studios(isMain: true) {\n      nodes {\n        name\n      }\n    }\n    nextAiringEpisode { \n      airingAt\n      timeUntilAiring\n      episode\n    }\n    rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n      rank\n      year\n    }\n    trailer { \n      site\n      id\n    }\n    bannerImage\n    status\n    episodes\n    season\n    description\n    meanScore\n    genres\n    }\n}\n";
 var getAnimeByTitleQuery = "\n# Retrieves the FIRST search result of the anime matching the provided title, returns the FIRST search result\nquery getAnimeByTitle($query: String) {\n    Media(search: $query, type: ANIME) {\n      # ...AnimeInfomation\n      id\n      title {\n        english \n        romaji\n      }\n      coverImage {\n        large\n      }\n      startDate {\n        year\n        month\n        day\n      }\n      endDate {\n        year\n        month\n        day\n      }\n      studios(isMain: true) {\n        nodes {\n          name\n        }\n      }\n      nextAiringEpisode { \n        airingAt\n        timeUntilAiring\n        episode\n      }\n      rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n        rank\n        year\n      }\n      trailer { \n        site\n        id\n      }\n      bannerImage\n      status\n      episodes\n      season\n      description\n      meanScore\n      genres\n    }\n}\n";
-var searchAnimeQuery = "\n# Searches for the specified anime, returns a list of ALL the search results\nquery searchAnime($query: String) {\n  Page {\n    media(search: $query, type: ANIME) {\n      # ...AnimeInfomation\n      id\n      title {\n        english \n        romaji\n      }\n      coverImage {\n        large\n      }\n      startDate {\n        year\n        month\n        day\n      }\n      endDate {\n        year\n        month\n        day\n      }\n      studios(isMain: true) {\n        nodes {\n          name\n        }\n      }\n      nextAiringEpisode { \n        airingAt\n        timeUntilAiring\n        episode\n      }\n      rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n        rank\n        year\n      }\n      trailer { \n        site\n        id\n      }\n      bannerImage\n      status\n      episodes\n      season\n      description\n      meanScore\n      genres\n      }\n    }\n}";
-var getTrendingAnimeQuery = "\nquery getTrendingAnime{\n  Page {\n    media(sort: TRENDING_DESC, type: ANIME) {\n      # ...AnimeInfomation\n      id\n      title {\n        english \n        romaji\n      }\n      coverImage {\n        large\n      }\n      startDate {\n        year\n        month\n        day\n      }\n      endDate {\n        year\n        month\n        day\n      }\n      studios(isMain: true) {\n        nodes {\n          name\n        }\n      }\n      nextAiringEpisode { \n        airingAt\n        timeUntilAiring\n        episode\n      }\n      rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n        rank\n        year\n      }\n      trailer { \n        site\n        id\n      }\n      bannerImage\n      status\n      episodes\n      season\n      description\n      meanScore\n      genres\n      }\n  }\n}\n";
+var searchAnimeQuery = "\nquery searchAnime($query: String, $page: Int, $perPage: Int) {\n  Page(page: $page, perPage: $perPage) {\n    pageInfo {\n      hasNextPage\n    }\n    media(search: $query, type: ANIME) {\n      # ...AnimeInfomation\n      id\n      title {\n        english # Can be EMPTY\n        romaji\n      }\n      coverImage {\n        large\n      }\n      startDate {\n        year\n        month\n        day\n      }\n      endDate {\n        year\n        month\n        day\n      }\n      studios(isMain: true) {\n        nodes {\n          name\n        }\n      }\n      nextAiringEpisode { # Can be EMPTY\n        airingAt\n        timeUntilAiring\n        episode\n      }\n      rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n        rank\n        year\n      }\n      trailer { # Can be EMPTY\n        site\n        id\n      }\n      bannerImage\n      status\n      episodes\n      season\n      description\n      meanScore\n      genres\n      }\n    }\n}\n";
+var getTrendingAnimeQuery = "\nquery getTrendingAnime($page: Int, $perPage: Int){\n  Page(page: $page, perPage: $perPage) {\n    pageInfo{\n      hasNextPage\n    }\n    media(sort: TRENDING_DESC, type: ANIME) {\n      # ...AnimeInfomation\n      id\n      title {\n        english # Can be EMPTY\n        romaji\n      }\n      coverImage {\n        large\n      }\n      startDate {\n        year\n        month\n        day\n      }\n      endDate {\n        year\n        month\n        day\n      }\n      studios(isMain: true) {\n        nodes {\n          name\n        }\n      }\n      nextAiringEpisode { # Can be EMPTY\n        airingAt\n        timeUntilAiring\n        episode\n      }\n      rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n        rank\n        year\n      }\n      trailer { # Can be EMPTY\n        site\n        id\n      }\n      bannerImage\n      status\n      episodes\n      season\n      description\n      meanScore\n      genres\n      }\n  }\n}\n";
 var getGenreCollectionQuery = "query getGenres{\n  GenreCollection\n}";
-var getAnimeByGenreQuery = "query getAnimeByGenre($genre: String, $season: MediaSeason, $seasonYear: Int){\n    Page{\n      media(genre: $genre, season: $season, seasonYear: $seasonYear,type: ANIME){\n    # ...AnimeInfomation\n          id\n          title {\n            english # Can be EMPTY\n            romaji\n          }\n          coverImage {\n            large\n          }\n          startDate {\n            year\n            month\n            day\n          }\n          endDate {\n            year\n            month\n            day\n          }\n          studios(isMain: true) {\n            nodes {\n              name\n            }\n          }\n          nextAiringEpisode { # Can be EMPTY\n            airingAt\n            timeUntilAiring\n            episode\n          }\n          rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n            rank\n            year\n          }\n          trailer { # Can be EMPTY\n            site\n            id\n          }\n          bannerImage\n          status\n          episodes\n          season\n          description\n          meanScore\n          genres\n          }\n      }\n  }";
-var getAnimeBySeasonAndYearQuery = "query getAnimeBySeasonAndYear($season: MediaSeason, $seasonYear: Int){\n  \tPage{\n      media(season: $season, seasonYear: $seasonYear, type: ANIME){\n          # ...AnimeInfomation\n        id\n        title {\n          english # Can be EMPTY\n          romaji\n        }\n        coverImage {\n          large\n        }\n        startDate {\n          year\n          month\n          day\n        }\n        endDate {\n          year\n          month\n          day\n        }\n        studios(isMain: true) {\n          nodes {\n            name\n          }\n        }\n        nextAiringEpisode { # Can be EMPTY\n          airingAt\n          timeUntilAiring\n          episode\n        }\n        rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n          rank\n          year\n        }\n        trailer { # Can be EMPTY\n          site\n          id\n        }\n        bannerImage\n        status\n        episodes\n        season\n        description\n        meanScore\n        genres\n        }\n    } \n}";
+var getAnimeByGenreQuery = "\nquery getAnimeByGenre($genre: String, $season: MediaSeason, $seasonYear: Int, $page: Int, $perPage: Int){\n  Page(page: $page, perPage: $perPage){\n    pageInfo{\n      hasNextPage\n    }\n    media(genre: $genre, season: $season, seasonYear: $seasonYear,type: ANIME){\n  # ...AnimeInfomation\n        id\n        title {\n          english # Can be EMPTY\n          romaji\n        }\n        coverImage {\n          large\n        }\n        startDate {\n          year\n          month\n          day\n        }\n        endDate {\n          year\n          month\n          day\n        }\n        studios(isMain: true) {\n          nodes {\n            name\n          }\n        }\n        nextAiringEpisode { # Can be EMPTY\n          airingAt\n          timeUntilAiring\n          episode\n        }\n        rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n          rank\n          year\n        }\n        trailer { # Can be EMPTY\n          site\n          id\n        }\n        bannerImage\n        status\n        episodes\n        season\n        description\n        meanScore\n        genres\n        }\n    }\n}\n";
+var getAnimeBySeasonAndYearQuery = "\nquery getAnimeBySeasonAndYear($season: MediaSeason, $seasonYear: Int, $page: Int, $perPage: Int){\n  \tPage(page: $page, perPage: $perPage){\n      pageInfo{\n        hasNextPage\n      }\n      media(season: $season, seasonYear: $seasonYear, type: ANIME){\n          # ...AnimeInfomation\n        id\n        title {\n          english # Can be EMPTY\n          romaji\n        }\n        coverImage {\n          large\n        }\n        startDate {\n          year\n          month\n          day\n        }\n        endDate {\n          year\n          month\n          day\n        }\n        studios(isMain: true) {\n          nodes {\n            name\n          }\n        }\n        nextAiringEpisode { # Can be EMPTY\n          airingAt\n          timeUntilAiring\n          episode\n        }\n        rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity \n          rank\n          year\n        }\n        trailer { # Can be EMPTY\n          site\n          id\n        }\n        bannerImage\n        status\n        episodes\n        season\n        description\n        meanScore\n        genres\n        }\n    }    \n}\n";
 /**
  * Contains details and information of an anime, sourced from AniList.
  * Almost all of these attributes can be undefined for cases where the detail isn't contained in their database.
@@ -62,7 +62,7 @@ var date = new Date();
  */
 exports.currentYear = date.getFullYear();
 /**
- * Array of seasons
+ * An array of seasons
  */
 exports.seasons = ['WINTER', 'SPRING', 'SUMMER', 'FALL'];
 /**
@@ -87,13 +87,16 @@ function createOptions(query, variables) {
  * 'SUMMER',
  * 'FALL'
  * @param seasonYear The year the anime aired/will air
- * @returns {(AnimeInformation[] | Error)} An array of {@link AnimeInformation} objects or an {@link Error}
+ * @param page  The page number
+ * @param [perPage=50] The count of results per page, not more than 50
+ * @returns {([AnimeInformation[], boolean] | Error)} An array of {@link AnimeInformation} objects and a boolean representing whether there are more page results, or an {@link Error}
  */
-function getAnimeBySeasonAndYear(season, seasonYear) {
+function getAnimeBySeasonAndYear(season, seasonYear, page, perPage) {
+    if (perPage === void 0) { perPage = 50; }
     return __awaiter(this, void 0, void 0, function () {
         var options;
         return __generator(this, function (_a) {
-            options = createOptions(getAnimeBySeasonAndYearQuery, { 'season': season, 'seasonYear': seasonYear });
+            options = createOptions(getAnimeBySeasonAndYearQuery, { 'season': season, 'seasonYear': seasonYear, 'page': page, 'perPage': perPage });
             return [2 /*return*/, fetch(anilistApiEntrypoint, options).then(handlePageResponse)
                     .then(handlePageResult)
                     .catch(handleError)];
@@ -103,12 +106,15 @@ function getAnimeBySeasonAndYear(season, seasonYear) {
 exports.getAnimeBySeasonAndYear = getAnimeBySeasonAndYear;
 /**
  * Retrieves a list of anime that are airing/will air in the current season
- * @returns {(AnimeInformation[] | Error)} An array of {@link AnimeInformation} objects or an {@link Error}
+ * @param page The page number
+ * @param [perPage=50] The count of results per page, not more than 50
+ * @returns {([AnimeInformation[], boolean] | Error)} An array of {@link AnimeInformation} and a boolean representing whether there are more page results, objects or an {@link Error}
  */
-function getCurrentSeasonAnime() {
+function getCurrentSeasonAnime(page, perPage) {
+    if (perPage === void 0) { perPage = 50; }
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, getAnimeBySeasonAndYear(exports.currentSeason, exports.currentYear)];
+            return [2 /*return*/, getAnimeBySeasonAndYear(exports.currentSeason, exports.currentYear, page, perPage)];
         });
     });
 }
@@ -134,20 +140,23 @@ exports.getCurrentSeasonAnime = getCurrentSeasonAnime;
       'Slice of Life',
       'Sports',
       'Supernatural',
-      'Thriller'.
+      'Thriller'
  * @param season The season the anime aired/will air, can be one of
       'WINTER',
       'SPRING',
       'SUMMER',
-      'FALL'.
+      'FALL'
  * @param seasonYear The year the anime aired/will air
- * @returns {(AnimeInformation[] | Error)} An array of {@link AnimeInformation} objects or an {@link Error}
+ * @param page The page number
+ * @param [perPage=50]  The count of results per page, not more than 50
+ * @returns {([AnimeInformation[], boolean] | Error)} An array of {@link AnimeInformation} objects and a boolean representing whether there are more page results, or an {@link Error}
  */
-function getAnimeByGenre(genre, season, seasonYear) {
+function getAnimeByGenre(genre, season, seasonYear, page, perPage) {
+    if (perPage === void 0) { perPage = 50; }
     return __awaiter(this, void 0, void 0, function () {
         var options;
         return __generator(this, function (_a) {
-            options = createOptions(getAnimeByGenreQuery, { 'genre': genre, 'season': season, 'seasonYear': seasonYear });
+            options = createOptions(getAnimeByGenreQuery, { 'genre': genre, 'season': season, 'seasonYear': seasonYear, 'page': page, 'perPage': perPage });
             return [2 /*return*/, fetch(anilistApiEntrypoint, options).then(handlePageResponse)
                     .then(handlePageResult)
                     .catch(handleError)];
@@ -186,14 +195,17 @@ function handleGenreCollectionResult(json) {
 }
 /**
  * Searches for the anime by the provided query
- * @param {string} query - The search query string.
- * @returns {(AnimeInformation[] | Error)} An array of  {@link AnimeInformation} objects or an {@link Error}.
+ * @param {string} query - The search query string
+ * @param page The page number
+ * @param [perPage=50] The count of results per page, not more than 50
+ * @returns {([AnimeInformation[], boolean] | Error)} An array of  {@link AnimeInformation} objects and a boolean representing whether there are more page results, or an {@link Error}.
  */
-function searchAnime(query) {
+function searchAnime(query, page, perPage) {
+    if (perPage === void 0) { perPage = 50; }
     return __awaiter(this, void 0, void 0, function () {
         var options;
         return __generator(this, function (_a) {
-            options = createOptions(searchAnimeQuery, { 'query': query });
+            options = createOptions(searchAnimeQuery, { 'query': query, 'page': page, 'perPage': perPage });
             return [2 /*return*/, fetch(anilistApiEntrypoint, options).then(handlePageResponse)
                     .then(handlePageResult)
                     .catch(handleError)];
@@ -203,13 +215,16 @@ function searchAnime(query) {
 exports.searchAnime = searchAnime;
 /**
  * Retrieves a list of the current trending anime
- * @returns {(AnimeInformation[] | Error)} An array of {@link AnimeInformation} objects or an {@link Error}.
+ * @param page The page number
+ * @param [perPage=50] The count of results per page, not more than 50
+ * @returns {([AnimeInformation[], boolean] | Error)} An array of {@link AnimeInformation} objects and a boolean representing whether there are more page results, or an {@link Error}.
  */
-function getTrendingAnime() {
+function getTrendingAnime(page, perPage) {
+    if (perPage === void 0) { perPage = 50; }
     return __awaiter(this, void 0, void 0, function () {
         var options;
         return __generator(this, function (_a) {
-            options = createOptions(getTrendingAnimeQuery, {});
+            options = createOptions(getTrendingAnimeQuery, { 'page': page, 'perPage': perPage });
             return [2 /*return*/, fetch(anilistApiEntrypoint, options).then(handlePageResponse)
                     .then(handlePageResult)
                     .catch(handleError)];
@@ -279,7 +294,7 @@ function handlePageResult(json) {
         var result = results_1[_i];
         animeInfoList.push(createAnimeInformationObject(result));
     }
-    return animeInfoList;
+    return [animeInfoList, json['data']['Page']['pageInfo']['hasNextPage']];
 }
 function handleError(error) {
     console.error(error);
@@ -349,11 +364,11 @@ function createAnimeInformationObject(json) {
     return animeInfo;
 }
 // TESTS ( ALL PASSED TESTS ) 🐐
-// getCurrentSeasonAnime().then((results)=>{console.log(results)})
-// getAnimeByGenre('Action', 'SUMMER', 2023).then( (results)=>{console.log(results)})
-// getAnimeBySeasonAndYear('SPRING', 2021).then( (results)=>{console.log(results)})
+// getCurrentSeasonAnime(1).then((results)=>{console.log(results)})
+// getAnimeByGenre('Action', 'SUMMER', 2023, 1).then( (results)=>{console.log(results)})
+// getAnimeBySeasonAndYear('SPRING', 2021, 1).then( (results)=>{console.log(results)})
 // getGenreCollection().then( (genres)=>{console.log(genres)})
-// searchAnime('Bleach').then( (results) => { console.log(results) });
-// getTrendingAnime().then( (results) => { console.log(results) });
+// searchAnime('Bleach', 1).then( (results) => { console.log(results) });
+// getTrendingAnime(1).then( (results) => { console.log(results) });
 // getAnimeByID(20).then( (result) => { console.log(result) }); // Naruto's ID is 20 on the anilist database
 // getAnimeByTitle('Jujutsu Kaisen Season 2').then( (result) => { console.log(result) });

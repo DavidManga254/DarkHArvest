@@ -1,12 +1,9 @@
-import { json } from "express";
-
 const anilistApiEntrypoint = 'https://graphql.anilist.co';
 
 // Initialising global query variables
 
 const getAnimeByIDQuery: string =
  `
-# Retrieves the anime matching the provided id, returns a result
 query getAnimeByID($id: Int) {
   Media(id: $id, type: ANIME) {
     # ...AnimeInfomation
@@ -112,14 +109,16 @@ query getAnimeByTitle($query: String) {
 
 const searchAnimeQuery: string = 
 `
-# Searches for the specified anime, returns a list of ALL the search results
-query searchAnime($query: String) {
-  Page {
+query searchAnime($query: String, $page: Int, $perPage: Int) {
+  Page(page: $page, perPage: $perPage) {
+    pageInfo {
+      hasNextPage
+    }
     media(search: $query, type: ANIME) {
       # ...AnimeInfomation
       id
       title {
-        english 
+        english # Can be EMPTY
         romaji
       }
       coverImage {
@@ -140,7 +139,7 @@ query searchAnime($query: String) {
           name
         }
       }
-      nextAiringEpisode { 
+      nextAiringEpisode { # Can be EMPTY
         airingAt
         timeUntilAiring
         episode
@@ -149,7 +148,7 @@ query searchAnime($query: String) {
         rank
         year
       }
-      trailer { 
+      trailer { # Can be EMPTY
         site
         id
       }
@@ -162,17 +161,21 @@ query searchAnime($query: String) {
       genres
       }
     }
-}`;
+}
+`;
 
 const getTrendingAnimeQuery: string = 
 `
-query getTrendingAnime{
-  Page {
+query getTrendingAnime($page: Int, $perPage: Int){
+  Page(page: $page, perPage: $perPage) {
+    pageInfo{
+      hasNextPage
+    }
     media(sort: TRENDING_DESC, type: ANIME) {
       # ...AnimeInfomation
       id
       title {
-        english 
+        english # Can be EMPTY
         romaji
       }
       coverImage {
@@ -193,7 +196,7 @@ query getTrendingAnime{
           name
         }
       }
-      nextAiringEpisode { 
+      nextAiringEpisode { # Can be EMPTY
         airingAt
         timeUntilAiring
         episode
@@ -202,7 +205,7 @@ query getTrendingAnime{
         rank
         year
       }
-      trailer { 
+      trailer { # Can be EMPTY
         site
         id
       }
@@ -217,66 +220,76 @@ query getTrendingAnime{
   }
 }
 `;
+
 const getGenreCollectionQuery = 
 `query getGenres{
   GenreCollection
 }`;
 
 const getAnimeByGenreQuery = 
-`query getAnimeByGenre($genre: String, $season: MediaSeason, $seasonYear: Int){
-    Page{
-      media(genre: $genre, season: $season, seasonYear: $seasonYear,type: ANIME){
-    # ...AnimeInfomation
+`
+query getAnimeByGenre($genre: String, $season: MediaSeason, $seasonYear: Int, $page: Int, $perPage: Int){
+  Page(page: $page, perPage: $perPage){
+    pageInfo{
+      hasNextPage
+    }
+    media(genre: $genre, season: $season, seasonYear: $seasonYear,type: ANIME){
+  # ...AnimeInfomation
+        id
+        title {
+          english # Can be EMPTY
+          romaji
+        }
+        coverImage {
+          large
+        }
+        startDate {
+          year
+          month
+          day
+        }
+        endDate {
+          year
+          month
+          day
+        }
+        studios(isMain: true) {
+          nodes {
+            name
+          }
+        }
+        nextAiringEpisode { # Can be EMPTY
+          airingAt
+          timeUntilAiring
+          episode
+        }
+        rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
+          rank
+          year
+        }
+        trailer { # Can be EMPTY
+          site
           id
-          title {
-            english # Can be EMPTY
-            romaji
-          }
-          coverImage {
-            large
-          }
-          startDate {
-            year
-            month
-            day
-          }
-          endDate {
-            year
-            month
-            day
-          }
-          studios(isMain: true) {
-            nodes {
-              name
-            }
-          }
-          nextAiringEpisode { # Can be EMPTY
-            airingAt
-            timeUntilAiring
-            episode
-          }
-          rankings { # Consider only the first two list elements, ranking by Ratings and by Popularity 
-            rank
-            year
-          }
-          trailer { # Can be EMPTY
-            site
-            id
-          }
-          bannerImage
-          status
-          episodes
-          season
-          description
-          meanScore
-          genres
-          }
-      }
-  }`;
+        }
+        bannerImage
+        status
+        episodes
+        season
+        description
+        meanScore
+        genres
+        }
+    }
+}
+`;
 
 const getAnimeBySeasonAndYearQuery = 
-`query getAnimeBySeasonAndYear($season: MediaSeason, $seasonYear: Int){
-  	Page{
+`
+query getAnimeBySeasonAndYear($season: MediaSeason, $seasonYear: Int, $page: Int, $perPage: Int){
+  	Page(page: $page, perPage: $perPage){
+      pageInfo{
+        hasNextPage
+      }
       media(season: $season, seasonYear: $seasonYear, type: ANIME){
           # ...AnimeInfomation
         id
@@ -323,8 +336,9 @@ const getAnimeBySeasonAndYearQuery =
         meanScore
         genres
         }
-    } 
-}`;
+    }    
+}
+`;
 
 /**
  * Contains details and information of an anime, sourced from AniList.
@@ -469,6 +483,9 @@ interface JsonResponseForPage {
  */
 
 interface Page {
+  pageInfo: {
+    hasNextPage: boolean
+  };
   media: Media[];
 }
 /**
@@ -532,7 +549,7 @@ const date = new Date()
  */
 export const currentYear = date.getFullYear()
 /**
- * Array of seasons
+ * An array of seasons
  */
 export const seasons = ['WINTER', 'SPRING', 'SUMMER', 'FALL']
 /**
@@ -559,10 +576,12 @@ function createOptions(query: string, variables: object) {
  * 'SUMMER',
  * 'FALL'
  * @param seasonYear The year the anime aired/will air
- * @returns {(AnimeInformation[] | Error)} An array of {@link AnimeInformation} objects or an {@link Error}
+ * @param page  The page number
+ * @param [perPage=50] The count of results per page, not more than 50
+ * @returns {([AnimeInformation[], boolean] | Error)} An array of {@link AnimeInformation} objects and a boolean representing whether there are more page results, or an {@link Error}
  */
-export async function getAnimeBySeasonAndYear(season: string, seasonYear: number): Promise<AnimeInformation[] | Error> {
-    const options = createOptions(getAnimeBySeasonAndYearQuery, {'season': season, 'seasonYear': seasonYear})
+export async function getAnimeBySeasonAndYear(season: string, seasonYear: number, page: number, perPage: number=50): Promise<[AnimeInformation[], boolean] | Error> {
+    const options = createOptions(getAnimeBySeasonAndYearQuery, {'season': season, 'seasonYear': seasonYear, 'page': page, 'perPage': perPage})
     return fetch(anilistApiEntrypoint, options).then(handlePageResponse)
     .then(handlePageResult)
     .catch(handleError)  
@@ -570,10 +589,12 @@ export async function getAnimeBySeasonAndYear(season: string, seasonYear: number
 
 /**
  * Retrieves a list of anime that are airing/will air in the current season
- * @returns {(AnimeInformation[] | Error)} An array of {@link AnimeInformation} objects or an {@link Error}
+ * @param page The page number
+ * @param [perPage=50] The count of results per page, not more than 50
+ * @returns {([AnimeInformation[], boolean] | Error)} An array of {@link AnimeInformation} and a boolean representing whether there are more page results, objects or an {@link Error}
  */
-export async function getCurrentSeasonAnime(): Promise<AnimeInformation[] | Error> {
-    return getAnimeBySeasonAndYear(currentSeason, currentYear)
+export async function getCurrentSeasonAnime(page: number, perPage: number=50): Promise<[AnimeInformation[], boolean] | Error> {
+    return getAnimeBySeasonAndYear(currentSeason, currentYear, page, perPage)
 }
 
 /**
@@ -597,17 +618,19 @@ export async function getCurrentSeasonAnime(): Promise<AnimeInformation[] | Erro
       'Slice of Life',
       'Sports',
       'Supernatural',
-      'Thriller'.
+      'Thriller'
  * @param season The season the anime aired/will air, can be one of
       'WINTER',
       'SPRING',
       'SUMMER',
-      'FALL'.
+      'FALL'
  * @param seasonYear The year the anime aired/will air
- * @returns {(AnimeInformation[] | Error)} An array of {@link AnimeInformation} objects or an {@link Error}
+ * @param page The page number
+ * @param [perPage=50]  The count of results per page, not more than 50
+ * @returns {([AnimeInformation[], boolean] | Error)} An array of {@link AnimeInformation} objects and a boolean representing whether there are more page results, or an {@link Error}
  */
-export  async function getAnimeByGenre(genre: string, season: string, seasonYear: number): Promise<AnimeInformation[] | Error> {
-  const options = createOptions(getAnimeByGenreQuery, {'genre': genre, 'season': season, 'seasonYear': seasonYear})
+export  async function getAnimeByGenre(genre: string, season: string, seasonYear: number, page: number, perPage: number=50): Promise<[AnimeInformation[], boolean] | Error> {
+  const options = createOptions(getAnimeByGenreQuery, {'genre': genre, 'season': season, 'seasonYear': seasonYear, 'page': page, 'perPage': perPage})
   return fetch(anilistApiEntrypoint, options).then(handlePageResponse)
   .then(handlePageResult)
   .catch(handleError)
@@ -637,11 +660,13 @@ function handleGenreCollectionResult(json: JsonGenreCollection): string[] {
   
 /** 
  * Searches for the anime by the provided query
- * @param {string} query - The search query string.
- * @returns {(AnimeInformation[] | Error)} An array of  {@link AnimeInformation} objects or an {@link Error}.
+ * @param {string} query - The search query string
+ * @param page The page number
+ * @param [perPage=50] The count of results per page, not more than 50
+ * @returns {([AnimeInformation[], boolean] | Error)} An array of  {@link AnimeInformation} objects and a boolean representing whether there are more page results, or an {@link Error}.
  */
-export async function searchAnime(query: string): Promise<AnimeInformation[] | Error> {
-    const options = createOptions(searchAnimeQuery, {'query': query})
+export async function searchAnime(query: string, page: number, perPage: number=50): Promise<[AnimeInformation[], boolean] | Error> {
+    const options = createOptions(searchAnimeQuery, {'query': query, 'page': page, 'perPage': perPage})
     return fetch(anilistApiEntrypoint, options).then(handlePageResponse)
     .then(handlePageResult)
     .catch(handleError);
@@ -649,10 +674,12 @@ export async function searchAnime(query: string): Promise<AnimeInformation[] | E
 
 /** 
  * Retrieves a list of the current trending anime
- * @returns {(AnimeInformation[] | Error)} An array of {@link AnimeInformation} objects or an {@link Error}.
+ * @param page The page number
+ * @param [perPage=50] The count of results per page, not more than 50
+ * @returns {([AnimeInformation[], boolean] | Error)} An array of {@link AnimeInformation} objects and a boolean representing whether there are more page results, or an {@link Error}.
  */
-export async function getTrendingAnime(): Promise<AnimeInformation[] | Error>{
-    const options = createOptions(getTrendingAnimeQuery, {})
+export async function getTrendingAnime(page: number, perPage: number=50): Promise<[AnimeInformation[], boolean] | Error>{
+    const options = createOptions(getTrendingAnimeQuery, {'page': page, 'perPage': perPage})
     return fetch(anilistApiEntrypoint, options).then(handlePageResponse)
     .then(handlePageResult)
     .catch(handleError);
@@ -703,13 +730,13 @@ function handleResult (json: JsonResponseForSingle): AnimeInformation {
     return createAnimeInformationObject(result);
 }
 
-function handlePageResult(json: JsonResponseForPage): AnimeInformation[] {
+function handlePageResult(json: JsonResponseForPage): [AnimeInformation[], boolean] {
     let animeInfoList: AnimeInformation[] = [];
     const results = json['data']['Page']['media'];
     for (const result of results){
         animeInfoList.push(createAnimeInformationObject(result));
     }
-    return animeInfoList;
+    return [animeInfoList, json['data']['Page']['pageInfo']['hasNextPage']];
 }
 
 function handleError(error: Error) {
@@ -783,11 +810,11 @@ function createAnimeInformationObject (json: Media): AnimeInformation {
 
 // TESTS ( ALL PASSED TESTS ) 🐐
 
-// getCurrentSeasonAnime().then((results)=>{console.log(results)})
-// getAnimeByGenre('Action', 'SUMMER', 2023).then( (results)=>{console.log(results)})
-// getAnimeBySeasonAndYear('SPRING', 2021).then( (results)=>{console.log(results)})
+// getCurrentSeasonAnime(1).then((results)=>{console.log(results)})
+// getAnimeByGenre('Action', 'SUMMER', 2023, 1).then( (results)=>{console.log(results)})
+// getAnimeBySeasonAndYear('SPRING', 2021, 1).then( (results)=>{console.log(results)})
 // getGenreCollection().then( (genres)=>{console.log(genres)})
-// searchAnime('Bleach').then( (results) => { console.log(results) });
-// getTrendingAnime().then( (results) => { console.log(results) });
+// searchAnime('Bleach', 1).then( (results) => { console.log(results) });
+// getTrendingAnime(1).then( (results) => { console.log(results) });
 // getAnimeByID(20).then( (result) => { console.log(result) }); // Naruto's ID is 20 on the anilist database
 // getAnimeByTitle('Jujutsu Kaisen Season 2').then( (result) => { console.log(result) });

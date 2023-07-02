@@ -150,8 +150,11 @@ query getAnimeByTitle($query: String) {
 
 
 # Searches for the specified anime, returns a list of ALL the search results
-query searchAnime($query: String) {
-  Page {
+query searchAnime($query: String, $page: Int, $perPage: Int) {
+  Page(page: $page, perPage: $perPage) {
+    pageInfo{
+      hasNextPage
+    }
     media(search: $query, type: ANIME) {
       # ...AnimeInfomation
       id
@@ -203,8 +206,11 @@ query searchAnime($query: String) {
 
 
 # Retrieves the trending anime, returns a list of the trending anime
-query getTrendingAnime{
-  Page {
+query getTrendingAnime($page: Int, $perPage: Int){
+  Page(page: $page, perPage: $perPage) {
+    pageInfo{
+      hasNextPage
+    }
     media(sort: TRENDING_DESC, type: ANIME) {
       # ...AnimeInfomation
       id
@@ -258,8 +264,11 @@ query getGenres{
   GenreCollection
 }
 
-query getAnimeByGenre($genre: String, $season: MediaSeason, $seasonYear: Int){
-  Page{
+query getAnimeByGenre($genre: String, $season: MediaSeason, $seasonYear: Int, $page: Int, $perPage: Int){
+  Page(page: $page, perPage: $perPage){
+    pageInfo{
+      hasNextPage
+    }
     media(genre: $genre, season: $season, seasonYear: $seasonYear,type: ANIME){
   # ...AnimeInfomation
         id
@@ -309,8 +318,11 @@ query getAnimeByGenre($genre: String, $season: MediaSeason, $seasonYear: Int){
     }
 }
 
-query getAnimeBySeasonAndYear($season: MediaSeason, $seasonYear: Int){
-  	Page{
+query getAnimeBySeasonAndYear($season: MediaSeason, $seasonYear: Int, $page: Int, $perPage: Int){
+  	Page(page: $page, perPage: $perPage){
+      pageInfo{
+        hasNextPage
+      }
       media(season: $season, seasonYear: $seasonYear, type: ANIME){
           # ...AnimeInfomation
         id
