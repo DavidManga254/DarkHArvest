@@ -7,19 +7,40 @@ const favFilePath = "appstore/favs.txt";
 function readFromFile() {
     try {
         const data = fs.readFileSync(favFilePath, 'utf8');
-        const dataArray = data.split('NextFavouriteAnime'); // Split the string into an array using newline as the delimiter
+        const dataArray = data.split('nextFavouriteAnime');
         return dataArray;
     } catch (err) {
-        throw err;
+        if(err.code === 'ENOENT'){
+            return;
+        }
     }
 }
 
 // Module function to read favorites
 module.exports.readfavourites = () => {
     try {
-        const data = readFromFile();
-        return data;
+        let data = readFromFile();
+        if(Array.isArray(data)){
+            let parsedData = [];
+            data = data.forEach(jsonString => {
+                jsonString = jsonString.trim();
+                // Parse each JSON string
+                try {
+                    const parsedJson = JSON.parse(jsonString);
+                    parsedData.push(parsedJson);
+                } catch (err) {
+                    console.log(jsonString)
+                    console.log("Error parsing JSON:", err);
+                }
+            });
+
+            return parsedData;
+        }else{
+            return;
+        }
+        
     } catch (err) {
+        
         return false;
     }
 };

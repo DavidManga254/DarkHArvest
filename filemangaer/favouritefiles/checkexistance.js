@@ -18,7 +18,6 @@ module.exports.checkFavExistance = async (data)=>{
         return false;
       }
     } catch (err) {
-      console.error(err);
-      throw err;
+      return false;
     }
 }

@@ -2,7 +2,7 @@ import * as React from 'react';
 import {useNavigate } from 'react-router-dom';
 import { useEffect,useState } from 'react';
 import { SideBar } from '../../components/sidebar/sidebar.jsx';
-
+import { AnimeList } from '../../components/animelist/list.jsx';
 
 export function FavouritePage(){
 
@@ -13,6 +13,7 @@ export function FavouritePage(){
             type :'retriveFavourite',
             payload : location.state
         }).then((data)=>{
+            console.log('received data is',data)
             setFavList(data)
         })
     }
@@ -32,7 +33,7 @@ export function FavouritePage(){
                     <SideBar/>
                 </div>
                 <div className='mainbar'>
-
+                    <AnimeList animeList={favList}/>
                 </div>
             </div>
         }

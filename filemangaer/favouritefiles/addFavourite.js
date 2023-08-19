@@ -8,7 +8,7 @@ const favFilePath = "appstore/favs.txt";
 
 // Function to write data to a file
 function writeToFile(data) {
-  fs.writeFile(favFilePath, data, (err) => {
+  fs.writeFile(favFilePath, data + 'nextFavouriteAnime', (err) => {
     if (err) throw err;
     // console.log('Data written to file.');
   });
@@ -25,8 +25,9 @@ function appendToFile(data) {
         // console.log('Data already exists in the file.');
         return;
       } else {
+        
         // Append the data to the file
-        fs.appendFile(favFilePath, data + 'NextFavouriteAnime', (err) => {
+        fs.appendFile(favFilePath, data + 'nextFavouriteAnime' , (err) => {
           if (err) throw err;
           // console.log('Data appended to file.');
         });
