@@ -1,49 +1,137 @@
 # Importation
+
 ```typescript
-import {searchAnime, getTrendingAnime, getAnimeByID, getAnimeByTitle, AnimeInformation} from 'path/to/anilist-api.js';
+import { searchAnime, getTrendingAnime, getAnimeByID, getAnimeByTitle, AnimeInformation, getCurrentSeasonAnime, getAnimeBySeasonAndYear, getAnimeByGenre, getGenreCollection } from 'path/to/anilist-api.js';
 ```
-- Replace
-```typescript
-  'path/to/anilist-api.js' 
+
+- Replace `'path/to/anilist-api.js'` with the path to the file depending on how you have your directories set up.
+- Note that the compiled [**JavaScript**](https://github.com/DavidManga254/DarkHArvest/blob/anilist-api/anilist-api/anilist-api.js) file is imported instead of the [**TypeScript**](https://github.com/DavidManga254/DarkHArvest/blob/anilist-api/anilist-api/anilist-api.ts) file.
+
+## Usage Documentation
+
+### `searchAnime(query, page, [perPage])`
+
+Searches for anime based on the provided query.
+
+- `query` (string): The search query string.
+- `page` (number): The page number.
+- `perPage` (optional, number): The count of results per page, not exceeding 50. Default: 50.
+
+Returns: `Promise<[AnimeInformation[], boolean]>` or `Error`. The array contains `AnimeInformation` objects, and the boolean indicates whether there is a next page.
+
+Example:
+
+*These are just simple barebones examples, remember to catch and handle errors appropriately*
+```javascript
+const [animeList, hasNextPage] = await searchAnime('Naruto', 1, 10);
 ```
-with the path to the file depending on how you have your directories set up
-- Note that the compiled [**JavaScript**](https://github.com/DavidManga254/DarkHArvest/blob/anilist-api/anilist-api/anilist-api.js) file instead of the **TypeScript** file is imported
-  
-# Searching for an anime
-```typescript
-searchAnime("Attack on Titan").then( (animeInfos: AnimeInformation[] | Error ) => { console.log(animeInfos) } );
+
+### `getTrendingAnime(page, [perPage])`
+
+Retrieves a list of currently trending anime.
+
+- `page` (number): The page number.
+- `perPage` (optional, number): The count of results per page, not exceeding 50. Default: 50.
+
+Returns: `Promise<[AnimeInformation[], boolean]>` or `Error`. The array contains `AnimeInformation` objects, and the boolean indicates whether there is a next page.
+
+Example:
+```javascript
+const [animeList, hasNextPage] = await getTrendingAnime(1, 20);
 ```
-- The searchAnime function returns a promise that resolves to either an an array of [`AnimeInformation`](#animeinformation) objects or an `Error`
-  
-# Getting the current trending anime
-```typescript
-getTrendingAnime().then( (animeInfos: AnimeInformation[] | Error) => { console.log(animeInfos) } );
+
+### `getAnimeByID(id)`
+
+Retrieves anime information based on the provided ID.
+
+- `id` (number): The ID of the anime.
+
+Returns: `Promise<AnimeInformation>` or `Error`. The `AnimeInformation` object contains details about the anime.
+
+Example:
+```javascript
+const anime = await getAnimeByID(12345);
 ```
-- Similar to the searchAnime function, the getTrendingAnime function returns a promise that resolves to either an array of [`AnimeInformation`](#animeinformation) objects or an `Error`
-  
-# Getting a specific anime by it's title
-- Retrieving an exact anime, by it's title instead of getting many search results
-```typescript
-getAnimeByTitle("Attack on Titan").then( (animeInfos: AnimeInformation | Error ) => { console.log(animeInfos) } );
+
+### `getAnimeByTitle(title)`
+
+Retrieves anime information based on the provided title.
+
+- `title` (string): The title of the anime.
+
+Returns: `Promise<AnimeInformation>` or `Error`. The `AnimeInformation` object contains details about the anime.
+
+Example:
+```javascript
+const anime = await getAnimeByTitle('Attack on Titan');
 ```
-- Returns a single [`AnimeInformation`](#animeinformation) object which is the topmost search result or an `Error`
-  
-# Getting a specifc anime by it's ID
-- Each anime has a unique identifier as an ID on the database
-- Retrieving an exact anime by it's ID
-```typescript
-getAnimeByID(20).then( (animeInfos: AnimeInformation | Error ) => { console.log(animeInfos) } );
+
+### `getAnimeBySeasonAndYear(season, seasonYear, page, [perPage])`
+
+Retrieves a list of anime that aired/will air in the provided season and year.
+
+- `season` (string): The season the anime aired/will air. Valid values: 'WINTER', 'SPRING', 'SUMMER', 'FALL'.
+- `seasonYear` (number): The year the anime aired/will air.
+- `page` (number): The page number.
+- `perPage` (optional, number): The count of results per page, not exceeding 50. Default: 50.
+
+Returns: `Promise<[AnimeInformation[], boolean]>` or `Error`. The array contains `AnimeInformation` objects, and the boolean indicates whether there is a next page.
+
+Example:
+```javascript
+const [animeList, hasNextPage] = await getAnimeBySeasonAndYear('WINTER', 2022, 1, 25);
 ```
-- Returns a single [`AnimeInformation`](#animeinformation) object or an `Error`
+
+### `getCurrentSeasonAnime(page, [perPage])`
+
+Retrieves a list of anime that are airing/will air in the current season.
+
+- `page` (number): The page number.
+- `perPage` (optional, number): The count of results per page, not exceeding 50. Default: 50.
+
+Returns: `Promise<[AnimeInformation[], boolean]>` or `Error`. The array contains `AnimeInformation` objects, and the boolean indicates whether there is a next page.
+
+Example:
+```javascript
+const [animeList, hasNextPage] = await getCurrentSeasonAnime(1, 10);
+```
+
+### `getAnimeByGenre(genre, season, seasonYear, page, [perPage])`
+
+Retrieves a list of anime that have the provided genre.
+
+- `genre` (string): The genre of the anime. Valid values: 'Action', 'Adventure', 'Comedy', 'Drama', 'Ecchi', 'Fantasy', 'Hentai', 'Horror', 'Mahou', 'Mecha', 'Music', 'Mystery', 'Psychological', 'Romance', 'Sci-Fi', 'Slice of Life', 'Sports', 'Supernatural', 'Thriller'.
+- `season` (string): The season the anime aired/will air. Valid values: 'WINTER', 'SPRING', 'SUMMER', 'FALL'.
+- `seasonYear` (number): The year the anime aired/will air.
+- `page` (number): The page number.
+- `perPage` (optional, number): The count of results per page, not exceeding 50. Default: 50.
+
+Returns: `Promise<[AnimeInformation[], boolean]>` or `Error`. The array contains `AnimeInformation` objects, and the boolean indicates whether there is a next page.
+
+Example:
+```javascript
+const [animeList, hasNextPage] = await getAnimeByGenre('Romance', 'SUMMER', 2023, 1, 15);
+```
+
+### `getGenreCollection()`
+
+Retrieves a list of genres available in the AniList database.
+
+Returns: `Promise<string[]>` or `Error`. The array contains strings representing the genres.
+
+Example:
+```javascript
+const genreList = await getGenreCollection();
+```
 
 # AnimeInformation
 
-Contains details and information of an anime, sourced from AniList. Almost all of these attributes can be undefined for cases where the detail isn't contained in their database.
+Contains details and information of an anime sourced from AniList. Almost all of these attributes can be undefined for cases where the detail isn't contained in their database.
 
 ## Attributes
 
 - **id**: `number | undefined`\
-  Anime ID as it's in the AniList database.
+  Anime ID as it is in the AniList database.
 
 - **title**: `object | undefined`\
   Anime title in English and Japanese.
@@ -68,10 +156,12 @@ Contains details and information of an anime, sourced from AniList. Almost all o
   Information about the next airing episode.
   - **airingOn**: `string | undefined`\
     Date when the next episode will air, in the format H:M:S D-M-Y.
-  - **timeUntilAiring**: `string | undefined`\
-    Time remaining before the next episode airs. The format depends on how long it is. Please check line 403.
+  - **timeUntilAiring**:
+
+ `string | undefined`\
+    Time remaining before the next episode airs. The format depends on the duration. Please check line 403.
   - **episode**: `number | undefined`\
-    The number of the episode that is to air.
+    The number of the episode that will air.
 
 - **rank**: `object | undefined`\
   Ranking information of the anime based on popularity and rating.
@@ -104,5 +194,6 @@ Contains details and information of an anime, sourced from AniList. Almost all o
   Mean score rating of the anime.
 
 - **genres**: `string[] | undefined`\
-  List of genres the anime is in.
-e
+  List of genres the anime belongs to.
+
+Please make sure to update the path to the `anilist-api.js` file according to your directory structure.
