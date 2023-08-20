@@ -1,9 +1,11 @@
 import { searchAnime } from "../../../anilist-api/anilist-api";
 
 
-export async function searchAnimeQuery(query){
+export async function searchAnimeQuery(query,page){
     try {
-        let response = await searchAnime(query,1,);
+        let response = await searchAnime(query,page,20);
+
+        return response[0]
 
         return response;
     } catch (error) {

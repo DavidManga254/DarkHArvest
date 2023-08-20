@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom';
 import { AnimeList } from '../../components/animelist/list.jsx';
 import { SideBar } from '../../components/sidebar/sidebar.jsx';
 import { getAnimeGenre } from './categories_view_model';
+import { Header } from '../../components/header/header.jsx';
 
 export function CategoriesPage({}){
     const  dispatch = useDispatch();
@@ -62,7 +63,16 @@ export function CategoriesPage({}){
             <div className='sidebar'>
                 <SideBar/>
             </div>
+            
             <div className='mainbar'>
+            <div className='w-full pb-5'>
+                <h2 className='text-white text-4xl font-serif'>
+                    {location.state} anime
+                </h2>
+            </div>
+                <div className='w-full pb-3'>
+                    <Header/>
+                </div>
                 <AnimeList animeList={categoriesData}/>
 
             </div>

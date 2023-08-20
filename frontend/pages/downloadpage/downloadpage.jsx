@@ -8,6 +8,7 @@ import TruncatedText from "../../components/stringcut/sringcut.jsx";
 import CountdownTimer from "../../components/countdown/countdown.jsx";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Modal } from "../../components/modal/modal.jsx";
+import { DownloadForm } from "../../components/downloadForm/downloadForm.jsx";
 
 //download page
 export function DownloadPage(){
@@ -125,10 +126,10 @@ export function DownloadPage(){
             <div className="sidebar">
                 <SideBar/>
             </div>
-            <div className="mainbar">
+            <div className="mainbar flex justify-between">
                 {/* banneer */}
 
-                <div className="w-full">
+                <div className="">
                     {/* left section */}
                     <div className="w-full flex flex-row text-white">
                         {/* anime image */}
@@ -233,6 +234,9 @@ export function DownloadPage(){
                             </div>
                         </div>
                     </div>
+                </div>
+                <div>
+                    <DownloadForm animeName={animeInfo.title.romaji?animeInfo.title.romaji:animeInfo.title.english} />
                 </div>
             </div>
         </div>

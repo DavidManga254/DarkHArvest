@@ -6,8 +6,7 @@ import { useState,useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTrendingAnime } from '../../../anilist-api/anilist-api.js';
 import { AnimeList } from '../../components/animelist/list.jsx';
-import { getAnimeCategories } from '../categories/categories_view_model.js';
-import { GenreMenu } from '../../components/menu/menu.jsx';
+import { Header } from '../../components/header/header.jsx';
 
 //homepage
 export function Homepage(){
@@ -16,7 +15,6 @@ export function Homepage(){
 
     const [animeData, setList] = useState({
         recommendedAnime:null,
-        categories : null
 
     });
     const [loader,setLoader] = useState(true)
@@ -27,7 +25,6 @@ export function Homepage(){
 
     const HomeDataCover = useSelector(state => state.ChangeStoreData.homePageCover);
     const recommendedData = useSelector(state => state.ChangeStoreData.recommendedPage);
-    const categories = useSelector(state => state.ChangeStoreData.genre);
 
     // check if exists in store
     useEffect(() => {       
@@ -64,45 +61,7 @@ export function Homepage(){
             setLoader(false);
 
         }
-
-        if(categories === null){
-            (async()=>{
-                try {
-                    let response = await getAnimeCategories();
-
-                    dispatch({
-                        type:"changeGenreList",
-                        payload: response
-                    });
-
-                    setList((previous) => {
-                        return {
-                            ...previous,
-                            categories : response
-                        }
-                    });
-                    
-                } catch (error) {
-                    console.log('erroegetting categories',error);
-                }
-            })();
-        } else {
-            setList((previous) => {
-                return {
-                    ...previous,
-                    categories : categories
-                }
-            });
-        }
       }, []);
-
-   
-    //function to take search request
-    async function  handleSearchRequest(event){
-        if (event.keyCode === 13){
-            navigate('/search',{state:event.target.value});
-        }    
-    }
 
 
 
@@ -116,19 +75,7 @@ export function Homepage(){
             <div className='mainbar'>
                 {/* movie choice cover section */}
                 {/* animelist */}
-                <div className='flex justify-between w-full'>
-                    <div className='w-1/2'>
-                       {
-                            animeData.categories === null ? null :
-                            <GenreMenu genreList={animeData.categories}/>
-                       } 
-                    </div>
-                    
-                    <div className='w-1/2 flex justify-end pr-3'>
-                        <input onChange={(event)=>handleSearchRequest(event)}  className='h- h-3/4 focus bg-slate-600 text-white p-2'  type='text' placeholder='search anime'/>
-
-                    </div>
-                </div>
+                <Header/>
                 <div>
                     <AnimeList animeList={animeData.recommendedAnime[0]}/>
                 </div>

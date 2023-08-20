@@ -66,19 +66,6 @@ export function SideBar({}){
 
                     }
                     {
-                        location.pathname.includes('search') ? 
-
-                        <div className=" mb-10 text-hoverColor w-3/4 flex flex-row justify-center">
-                            <SearchIcon/>
-                        </div>
-
-                        :
-                        <div className="sidebarComponents">
-                            <SearchIcon onClick={()=>navigateToLocation("/search")} />
-                        </div>
-
-                    }
-                    {
                         location.pathname === "/favourite" ? 
 
                         <div className=" mb-10 text-hoverColor w-3/4 flex flex-row justify-center">

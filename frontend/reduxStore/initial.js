@@ -2,5 +2,6 @@ export const initialState = {
     homePageCover : null,
     recommendedPage : null,
     categories : null,
-    genre : null
+    genre : null,
+    searchResults : null
 }

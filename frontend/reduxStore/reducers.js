@@ -22,6 +22,11 @@ export function ChangeStoreData(state=initialState,action){
                 ...initialState,
                 genre : action.payload
             }
+        case 'changeSearchResults':
+            return{
+                ...initialState,
+                searchResults : action.payload
+            }
         default:
             return initialState;
     }
