@@ -65,12 +65,19 @@ export function SideBar({}){
                         </div>
 
                     }
-                    <div className="sidebarComponents">
-                        <SearchIcon/>
-                    </div>
-                    <div className="sidebarComponents">
-                        <GridViewIcon/>
-                    </div>
+                    {
+                        location.pathname.includes('search') ? 
+
+                        <div className=" mb-10 text-hoverColor w-3/4 flex flex-row justify-center">
+                            <SearchIcon/>
+                        </div>
+
+                        :
+                        <div className="sidebarComponents">
+                            <SearchIcon onClick={()=>navigateToLocation("/search")} />
+                        </div>
+
+                    }
                     {
                         location.pathname === "/favourite" ? 
 
@@ -84,6 +91,7 @@ export function SideBar({}){
                         </div>
 
                     }
+                    
                     <div className="sidebarComponents">
                         <CalendarMonthIcon/>
                     </div>

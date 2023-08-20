@@ -3,9 +3,9 @@ import { getAnimeCategories } from './categories_view_model';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getAnimeByGenre } from '../../../anilist-api/anilist-api';
 import { AnimeList } from '../../components/animelist/list.jsx';
 import { SideBar } from '../../components/sidebar/sidebar.jsx';
+import { getAnimeGenre } from './categories_view_model';
 
 export function CategoriesPage({}){
     const  dispatch = useDispatch();
@@ -15,10 +15,11 @@ export function CategoriesPage({}){
 
     const categories = useSelector(state => state.ChangeStoreData.categories);
 
+    console.log('her is stored categories',categories);
+    console.log('here is passed genre',location.state)
     async function setGenreList(){
         try {
-            let response = await getAnimeByGenre(location.state);
-            console.log('here is response',response)
+            let response = await getAnimeGenre(location.state);
 
             dispatch({
                 type:"changeCategories",
@@ -36,17 +37,21 @@ export function CategoriesPage({}){
 
     useEffect(()=>{
         if(categories === null){
+            console.log('part 1 ran');
             (async() => {
                 await setGenreList();
             })();
         } else if (categories !== null && categories.name !== location. state) {
+            console.log('part 2 ran');
             (async() => {
                 await setGenreList();
             })();
         } else {
+            console.log('part 3 ran');
+
             setCategoriesData(categories.genreList);
         }
-    })
+    },[]);
 
 
     return(
@@ -58,7 +63,7 @@ export function CategoriesPage({}){
                 <SideBar/>
             </div>
             <div className='mainbar'>
-                <AnimeList animeList={categoriesData[0]}/>
+                <AnimeList animeList={categoriesData}/>
 
             </div>
         </div>

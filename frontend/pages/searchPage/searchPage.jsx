@@ -9,6 +9,9 @@ export function SearchPage(){
     
     const [searchResults, setSearchResults] = useState(null);
 
+
+    
+
     return(
         <>
     

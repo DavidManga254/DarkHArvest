@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {useNavigate } from 'react-router-dom';
 import { useEffect,useState } from 'react';
 import { SideBar } from '../../components/sidebar/sidebar.jsx';
 import { AnimeList } from '../../components/animelist/list.jsx';

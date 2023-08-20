@@ -47,6 +47,7 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.5",
     "@reduxjs/toolkit": "^1.9.5",
+    "@szhsin/react-menu": "^4.0.3",
     "apollo-boost": "^0.4.9",
     "apollo-client": "^2.6.10",
     "electron-squirrel-startup": "^1.0.0",

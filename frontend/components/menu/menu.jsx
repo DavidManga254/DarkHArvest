@@ -20,7 +20,7 @@ export function GenreMenu({genreList}){
         <div>
             <Menu menuButton={<MenuButton> <div className='border-solid border border-white p-1 text-white' > Genres <ArrowDropDownIcon/> </div> </MenuButton>} transition>
                 {
-                    genreList.map((genre) => <MenuItem onClick={(genre) => navigateToCategory(genre)}>{genre}</MenuItem>)
+                    genreList.map((genre) => <MenuItem onClick={() => navigateToCategory(genre)}>{genre}</MenuItem>)
                 }
             </Menu>
         </div>

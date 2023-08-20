@@ -1,4 +1,6 @@
 export const initialState = {
     homePageCover : null,
-    recommendedPage : null
+    recommendedPage : null,
+    categories : null,
+    genre : null
 }

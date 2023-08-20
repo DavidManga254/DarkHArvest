@@ -1,17 +1,13 @@
 import { SplashScreen } from '../../components/splashscreen/splashpage.jsx'
 import * as React from 'react';
-//simport { ipcRenderer } from 'electron';
-import { searcher } from '../../../src/renderer.js';
 import {useNavigate } from 'react-router-dom';
 import { SideBar } from '../../components/sidebar/sidebar.jsx';
 import { useState,useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTrendingAnime } from '../../../anilist-api/anilist-api.js';
-import TruncatedText from '../../components/stringcut/sringcut.jsx';
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import { AnimeList } from '../../components/animelist/list.jsx';
-
-
+import { getAnimeCategories } from '../categories/categories_view_model.js';
+import { GenreMenu } from '../../components/menu/menu.jsx';
 
 //homepage
 export function Homepage(){
@@ -19,8 +15,8 @@ export function Homepage(){
     const navigate = useNavigate();
 
     const [animeData, setList] = useState({
-        mainCoverAnime:null,
-        recommendedAnime:null
+        recommendedAnime:null,
+        categories : null
 
     });
     const [loader,setLoader] = useState(true)
@@ -31,7 +27,7 @@ export function Homepage(){
 
     const HomeDataCover = useSelector(state => state.ChangeStoreData.homePageCover);
     const recommendedData = useSelector(state => state.ChangeStoreData.recommendedPage);
-
+    const categories = useSelector(state => state.ChangeStoreData.genre);
 
     // check if exists in store
     useEffect(() => {       
@@ -40,28 +36,15 @@ export function Homepage(){
             try {
               let trendingApiResponse = await getTrendingAnime();
                 
-              //take number one trending
-              let trendingApiResponseCover = trendingApiResponse[0];
-
-              if(trendingApiResponseCover.bannerImage === null || trendingApiResponseCover.bannerImage === undefined){
-                let incrementor = 0;
-                while(trendingApiResponseCover.bannerImage === null || trendingApiResponseCover.bannerImage === undefined){
-                    trendingApiResponseCover = trendingApiResponse[incrementor];
-                    incrementor++;
-                }
-              }
-
               //store fetched data
 
               dispatch({
                 type:"changeRecommendedData",
                 payload: trendingApiResponse
               });
-
               setList((previous)=>{
                 return{
                     ...previous,
-                    mainCoverAnime : trendingApiResponseCover,
                     recommendedAnime : trendingApiResponse
                 }
               });
@@ -75,12 +58,41 @@ export function Homepage(){
             setList((previous)=>{
                 return{
                     ...previous,
-                    mainCoverAnime : HomeDataCover,
                     recommendedAnime : recommendedData
                 }
             });
             setLoader(false);
 
+        }
+
+        if(categories === null){
+            (async()=>{
+                try {
+                    let response = await getAnimeCategories();
+
+                    dispatch({
+                        type:"changeGenreList",
+                        payload: response
+                    });
+
+                    setList((previous) => {
+                        return {
+                            ...previous,
+                            categories : response
+                        }
+                    });
+                    
+                } catch (error) {
+                    console.log('erroegetting categories',error);
+                }
+            })();
+        } else {
+            setList((previous) => {
+                return {
+                    ...previous,
+                    categories : categories
+                }
+            });
         }
       }, []);
 
@@ -88,16 +100,7 @@ export function Homepage(){
     //function to take search request
     async function  handleSearchRequest(event){
         if (event.keyCode === 13){
-            let results;
-            //anime name
-            let request = event.target.value;
-            results= await window.connect.searchAnime(request);
-            
-
-            navigate('/search',{state:{
-                name:request,
-                list:results
-            }});
+            navigate('/search',{state:event.target.value});
         }    
     }
 
@@ -113,8 +116,21 @@ export function Homepage(){
             <div className='mainbar'>
                 {/* movie choice cover section */}
                 {/* animelist */}
+                <div className='flex justify-between w-full'>
+                    <div className='w-1/2'>
+                       {
+                            animeData.categories === null ? null :
+                            <GenreMenu genreList={animeData.categories}/>
+                       } 
+                    </div>
+                    
+                    <div className='w-1/2 flex justify-end pr-3'>
+                        <input onChange={(event)=>handleSearchRequest(event)}  className='h- h-3/4 focus bg-slate-600 text-white p-2'  type='text' placeholder='search anime'/>
+
+                    </div>
+                </div>
                 <div>
-                    <AnimeList animeList={animeData.recommendedAnime}/>
+                    <AnimeList animeList={animeData.recommendedAnime[0]}/>
                 </div>
 
 
