@@ -12,7 +12,6 @@ export function AnimeList({animeList}){
             state:animeData
         });
     }
-
     return(
         <div className="anime-list w-full flex flex-row flex-wrap">
             

@@ -65,15 +65,20 @@ export function SideBar({}){
                         </div>
 
                     }
-                    <div className="sidebarComponents">
-                        <SearchIcon/>
-                    </div>
-                    <div className="sidebarComponents">
-                        <GridViewIcon/>
-                    </div>
-                    <div className="sidebarComponents">
-                        <FavoriteIcon/>
-                    </div>
+                    {
+                        location.pathname === "/favourite" ? 
+
+                        <div className=" mb-10 text-hoverColor w-3/4 flex flex-row justify-center">
+                            <FavoriteIcon /> 
+                        </div>
+
+                        :
+                        <div className="sidebarComponents">
+                            <FavoriteIcon onClick={()=>navigateToLocation("/favourite")} />
+                        </div>
+
+                    }
+                    
                     <div className="sidebarComponents">
                         <CalendarMonthIcon/>
                     </div>
