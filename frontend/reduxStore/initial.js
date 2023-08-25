@@ -3,5 +3,6 @@ export const initialState = {
     recommendedPage : null,
     categories : null,
     genre : null,
-    searchResults : null
+    searchResults : null,
+    currentDownloadAnime : null
 }

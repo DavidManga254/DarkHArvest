@@ -26,7 +26,7 @@
 
     }
     .mainbar{
-      @apply w-[95%] flex flex-row flex-wrap h-full overflow-y-scroll;
+      @apply w-[95%] flex flex-row justify-between flex-wrap h-full overflow-y-scroll p-3;
     }
 
     .sidebarComponents{

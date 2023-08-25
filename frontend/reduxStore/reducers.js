@@ -27,6 +27,11 @@ export function ChangeStoreData(state=initialState,action){
                 ...initialState,
                 searchResults : action.payload
             }
+        case 'changeCurrentDownloadAnime':
+            return{
+                ...initialState,
+                currentDownloadAnime : action.payload
+            }
         default:
             return initialState;
     }

@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getTrendingAnime } from '../../../anilist-api/anilist-api.js';
 import { AnimeList } from '../../components/animelist/list.jsx';
 import { Header } from '../../components/header/header.jsx';
+import { DownloadForm } from '../../components/downloadForm/downloadForm.jsx';
 
 //homepage
 export function Homepage(){
@@ -77,6 +78,7 @@ export function Homepage(){
                 {/* animelist */}
                 <Header/>
                 <div>
+                    <DownloadForm animeName={'jujutsu kaisen'}/>
                     <AnimeList animeList={animeData.recommendedAnime[0]}/>
                 </div>
 

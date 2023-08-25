@@ -55,7 +55,6 @@ module.exports.SearchAnime = async function(animeName,browser,page){
 
                     }));
                          
-                    console.log(results);
                                 
 
                                 
@@ -65,11 +64,12 @@ module.exports.SearchAnime = async function(animeName,browser,page){
 
        
        //await details.animeDetails(results[0],500,502,animeName,page,browser);
-      
 
         
     }catch(err){
         console.log(`error inputing and searching`,err);
     }
+    console.log('here is the results',results);
+    await browser.close();
     return results;
 }

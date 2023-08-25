@@ -138,7 +138,7 @@ async function createDownloaderWindow(){
 
   let crawlerWindow = new BrowserWindow({
     width:800,
-    show:false,
+    show:true,
     height: 600,
     args: [
       '--disable-gpu',
@@ -227,12 +227,10 @@ async function createDownloaderWindow(){
 ipcMain.handle('search',async (event, arg) => {
   //create browser and window
   await createDownloaderWindow();
-  console.log('created');
 
   let searchResults = await searchModule.SearchAnime(arg,searchBrowser,searchPage);
   
   return searchResults;
-
 });
 
 ipcMain.handle('get/details',async (event,args)=>{
