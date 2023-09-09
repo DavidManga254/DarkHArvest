@@ -235,13 +235,14 @@ ipcMain.handle('search',async (event, arg) => {
 
 ipcMain.handle('get/details',async (event,args)=>{
   //get anime details
+  console.log('here is the link', args)
   let details = await detailsModule.animeDetails(args,searchPage)
 
   return details;
 });
 
 ipcMain.handle('download/anime',async (event,args)=>{
-  await downloadModule.downloadAnime(args.start,args.stop,args.first,args.name,searchBrowser,searchPage)
+  await downloadModule.downloadAnime(args.start,args.stop,args.first,args.name,searchBrowser,searchPage,args.quality,args.language)
 })
 
 ipcMain.handle("manageFavourite",async(event,args)=>{

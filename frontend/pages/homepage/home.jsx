@@ -78,7 +78,6 @@ export function Homepage(){
                 {/* animelist */}
                 <Header/>
                 <div>
-                    <DownloadForm animeName={'jujutsu kaisen'}/>
                     <AnimeList animeList={animeData.recommendedAnime[0]}/>
                 </div>
 

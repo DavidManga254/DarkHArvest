@@ -70,6 +70,6 @@ module.exports.SearchAnime = async function(animeName,browser,page){
         console.log(`error inputing and searching`,err);
     }
     console.log('here is the results',results);
-    await browser.close();
+    // await browser.close();
     return results;
 }

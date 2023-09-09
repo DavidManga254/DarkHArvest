@@ -3,16 +3,20 @@ const path = require('path');
 const createDir = require('../../../functions/createdir.js');
 
 
-module.exports.downloadManager= async function(firstLink,start,end,name,browser,page,quality){
+module.exports.downloadManager= async function(firstLink,start,end,name,browser,page,quality,language){
     
   let downloadLink;
+  let chosenLink;
+
   let ender = end;
     console.log(firstLink)
-    if(end === undefined){
+    if(end === undefined || end == null){
       ender = firstLink.length-1
     }
     console.log('end is',ender)
-    if(start>end){
+    console.log('start is',start)
+    if(start>ender){
+      console.log('close')
       await page.close()
       return;
     }else{
@@ -45,16 +49,25 @@ module.exports.downloadManager= async function(firstLink,start,end,name,browser,
         }));
         console.log('here are the link',downloadLink)
         for(let i =0;i<downloadLink.length;i++){
-          if(downloadLink[i].quality.includes(quality)){
-            downloadLink = downloadLink[i];
+          console.log('........................................................................................................................')
+          console.log(downloadLink[i].quality.toLowerCase())
+          console.log(quality.toLowerCase())
+          console.log(language.toLowerCase())
+          console.log('.......................................................................................................................')
+          if(downloadLink[i].quality.toLowerCase().includes(quality.toLowerCase()) && downloadLink[i].quality.toLowerCase().includes(language.toLowerCase()) ){
+            chosenLink = downloadLink[i];
+            break;
           }
           else{
-            downloadLink = downloadLink[downloadLink.length-1]
+            const filteredLinks = downloadLink.filter(linkObj =>
+              linkObj.quality.toLowerCase().includes(language.toLowerCase())
+            );
+            chosenLink = filteredLinks.pop();
           }
         }
 
 
-        console.log(downloadLink);    
+        console.log('chosen download link is ',chosenLink);    
     }catch(err){
         console.log('error getting download link',err);
     }
@@ -63,9 +76,9 @@ module.exports.downloadManager= async function(firstLink,start,end,name,browser,
     //download manager
     try {
         downloader = page;
-        console.log('going to ',downloadLink.link)
+        console.log('going to ',chosenLink.link)
         
-        await downloader.goto(downloadLink.link,{timeout:0});
+        await downloader.goto(chosenLink.link,{timeout:0});
       
         function delay(ms) {
           return new Promise(resolve => {
@@ -131,7 +144,7 @@ module.exports.downloadManager= async function(firstLink,start,end,name,browser,
                 });
                 
                 console.log(`Download conpmleteder: ${filename}`);
-                await this.downloadManager(firstLink,start+1,ender,name,browser,page,'720p')
+                await this.downloadManager(firstLink,start+1,ender,name,browser,page,quality,language);
               }
 
             }

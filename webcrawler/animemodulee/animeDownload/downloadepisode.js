@@ -3,9 +3,9 @@ const pager = require('../../browserinstance/browser.js');
 const downloadManager = require('./finaldownload.js');
 
 // module to begin downloads;
-module.exports.downloadAnime = async function(start,stop,animelink,name,browser,page){
+module.exports.downloadAnime = async function(start,stop,animelink,name,browser,page,quality,lan){
 
-    if(start > stop){
+    if(start > stop && stop !== null){
         await browser.close()
         return
     }else{
@@ -37,7 +37,7 @@ module.exports.downloadAnime = async function(start,stop,animelink,name,browser,
         console.log('here is title',title);
         console.log('here is list',epLink)
 
-        await downloadManager.downloadManager(epLink,start,stop,name,browser,page,'720p');
+        await downloadManager.downloadManager(epLink,start,stop,name,browser,page,quality,lan);
 
         
 

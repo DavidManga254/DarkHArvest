@@ -6,8 +6,7 @@ export function DownloadForm({animeName}){
     const[downloadDetails, setDownloadDetails] = useState({
         start : 1,
         stop : null,
-        quality : '480',
-        alternativeQuality:'360',
+        quality : '360',
         language : 'sub',
 
     });
@@ -18,6 +17,23 @@ export function DownloadForm({animeName}){
             console.log('received data is',data)
             setSearchResults(data)
         })
+    }
+    async function downloadAnime(firstLink) {
+        window.connect.downloadAnime({
+            start : downloadDetails.start,
+            stop : downloadDetails.stop,
+            first : firstLink,
+            name : animeName,
+            quality : downloadDetails.quality,
+            language : downloadDetails.language
+        });
+    }
+
+    async function getDetails(firstLink) {
+        let response = await window.connect.getDetails(firstLink)
+
+        // console.log('here is the response',response);
+        downloadAnime(response.episode)
     }
     return(
         <div className=''>
@@ -48,25 +64,10 @@ export function DownloadForm({animeName}){
                 <div className='mb-5 flex'>
                     <div className='mr-5'>
                         <label>Quality</label><br></br>
-                        <select id="dropdown" className='text-black' value={"480"} onChange={(e)=>setDownloadDetails((previous)=>{
+                        <select id="dropdown" className='text-black' placeholder='360p' onChange={(e)=>setDownloadDetails((previous)=>{
                             return {
                                 ...previous,
                                 quality : e.target.value
-                            }
-                        })} >
-                            <option value="360">360p</option>
-                            <option value="480">480p</option>
-                            <option value="720">720p</option>
-                            <option value="1080">1080p</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label>Alternative Quality</label><br></br>
-                        <select id="dropdown" className='text-black' placeholder={"360"} onChange={(e)=>setDownloadDetails((previous)=>{
-                            return {
-                                ...previous,
-                                alternativeQuality : e.target.value
                             }
                         })} >
                             <option value="360">360p</option>
@@ -86,7 +87,7 @@ export function DownloadForm({animeName}){
                             }
                         })} >
                         <option value="sub">SUB</option>
-                        <option value="dub">DUB</option>
+                        <option value="eng">DUB</option>
                     </select>
                 </div> 
                 <div className='w-full flex justify-center'>
@@ -98,7 +99,7 @@ export function DownloadForm({animeName}){
                     searchResults === null?<p>loading</p>:
                     searchResults.map((anime,index)=>{
                         return <div key={index} className="w-[45%] m-2 hover:cursor-pointer hover:scale-105">
-                        <div className="relative w-full">
+                        <div className="relative w-full" onClick={() => getDetails(anime.link)} >
                             <div className="w-full">
                                 <img className="w-full rounded-lg" style={{ aspectRatio: '16/20' }} src={anime.cover?anime.cover:null}/>
                             </div>
