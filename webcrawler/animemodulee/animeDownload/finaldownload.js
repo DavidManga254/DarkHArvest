@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const createDir = require('../../../functions/createdir.js');
-
+const updateDownload = require('../../../src/mainprocess/globalObjects/progressBar/downloadProgress.js')
+const { Notification } = require('electron'); 
 
 module.exports.downloadManager= async function(firstLink,start,end,name,browser,page,quality,language){
     
@@ -17,6 +18,9 @@ module.exports.downloadManager= async function(firstLink,start,end,name,browser,
     console.log('start is',start)
     if(start>ender){
       console.log('close')
+      updateDownload.updateWindowDownloadProgress(0,0);
+
+      new Notification({title : `Download Complete`, body : `${name} downloaded`})
       await page.close()
       return;
     }else{
@@ -144,6 +148,8 @@ module.exports.downloadManager= async function(firstLink,start,end,name,browser,
                 });
                 
                 console.log(`Download conpmleteder: ${filename}`);
+    updateDownload.updateWindowDownloadProgress(start, ender);
+
                 await this.downloadManager(firstLink,start+1,ender,name,browser,page,quality,language);
               }
 

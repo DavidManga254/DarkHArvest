@@ -7,7 +7,6 @@ const searchModule = require('../webcrawler/animemodulee/searchanime/searchanime
 const detailsModule = require('../webcrawler/animemodulee/animeDownload/details.js');
 const downloadModule = require('../webcrawler/animemodulee/animeDownload/downloadepisode.js')
 
-
 const  mainFavModule = require("./mainprocess/filemanagers/favouritesManager/favmanager.js");
 
 function doubleBackslashes(string) {
@@ -19,6 +18,7 @@ function doubleBackslashes(string) {
 
 let browser;
 let mainWindow;
+
 
 (async()=>{
   await pie.initialize(app);
@@ -56,7 +56,6 @@ const createWindow = async () => {
     },
   
   });
-
   // and load the index.html of the app.
   try{
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -252,3 +251,7 @@ ipcMain.handle("manageFavourite",async(event,args)=>{
 
     return response;
 })
+
+module.exports.returnMainWindow = function() {
+  return mainWindow;
+}

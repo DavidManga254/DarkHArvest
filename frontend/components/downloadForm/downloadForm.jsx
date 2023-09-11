@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import {useState } from 'react';
+
 
 export function DownloadForm({animeName}){
     const[downloadDetails, setDownloadDetails] = useState({

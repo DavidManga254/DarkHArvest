@@ -45,7 +45,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",
-    "@mui/material": "^5.13.5",
+    "@mui/material": "^5.14.8",
     "@reduxjs/toolkit": "^1.9.5",
     "@szhsin/react-menu": "^4.0.3",
     "apollo-boost": "^0.4.9",
@@ -63,6 +63,7 @@
     "react-dom": "^18.2.0",
     "react-redux": "^8.1.0",
     "react-router-dom": "^6.11.0",
+    "reactjs-popup": "^2.0.6",
     "sort-by": "^1.2.0",
     "user-agents": "^1.0.1358"
   },
