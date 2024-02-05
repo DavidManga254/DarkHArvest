@@ -29473,6 +29473,193 @@ function defaultCallback(err) {
 
 /***/ }),
 
+/***/ "./filemangaer/favouritefiles/addFavourite.js":
+/*!****************************************************!*\
+  !*** ./filemangaer/favouritefiles/addFavourite.js ***!
+  \****************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+//module to add favourite games to text
+const path = __webpack_require__(/*! path */ "path");
+const fs = __webpack_require__(/*! fs */ "fs");
+const favmodule = __webpack_require__(/*! ./favouriteModule */ "./filemangaer/favouritefiles/favouriteModule.js");
+const favFilePath = "appstore/favs.txt";
+
+// Function to write data to a file
+function writeToFile(data) {
+  fs.writeFile(favFilePath, data + 'nextFavouriteAnime', err => {
+    if (err) throw err;
+    // console.log('Data written to file.');
+  });
+}
+
+// Function to append data to a file
+function appendToFile(data) {
+  // Read the file contents
+  fs.readFile(favFilePath, 'utf8', (err, fileData) => {
+    if (err) throw err;
+
+    // Check if the data already exists in the file
+    if (fileData.includes(data)) {
+      // console.log('Data already exists in the file.');
+      return;
+    } else {
+      // Append the data to the file
+      fs.appendFile(favFilePath, data + 'nextFavouriteAnime', err => {
+        if (err) throw err;
+        // console.log('Data appended to file.');
+      });
+    }
+  });
+}
+
+module.exports.addFavourite = data => {
+  try {
+    // console.log("called");
+    //check if file exists first
+    if (fs.existsSync(favFilePath)) {
+      // console.log("already exists",data)
+      //append the new fav to file
+      appendToFile(data);
+    } else {
+      // console.log("not exist",data)
+      //create file if it does not exist
+      writeToFile(data);
+    }
+  } catch (err) {
+    console.log(err);
+    // if (err){
+    //     console.log(err);
+    //     return err;
+    // }
+  }
+};
+
+/***/ }),
+
+/***/ "./filemangaer/favouritefiles/checkexistance.js":
+/*!******************************************************!*\
+  !*** ./filemangaer/favouritefiles/checkexistance.js ***!
+  \******************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const fs = __webpack_require__(/*! fs */ "fs");
+const favModule = __webpack_require__(/*! ./favouriteModule.js */ "./filemangaer/favouritefiles/favouriteModule.js");
+const favFilePath = "appstore/favs.txt";
+module.exports.checkFavExistance = async data => {
+  // read file list and check existance of data
+
+  try {
+    const fileData = await fs.promises.readFile(favFilePath, "utf8");
+    // console.log(fileData);
+    // console.log("here is data",data)
+    if (fileData.includes(data)) {
+      console.log("Data was found");
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    return false;
+  }
+};
+
+/***/ }),
+
+/***/ "./filemangaer/favouritefiles/favouriteModule.js":
+/*!*******************************************************!*\
+  !*** ./filemangaer/favouritefiles/favouriteModule.js ***!
+  \*******************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const addfav = __webpack_require__(/*! ./addFavourite */ "./filemangaer/favouritefiles/addFavourite.js");
+const checkExist = __webpack_require__(/*! ./checkexistance */ "./filemangaer/favouritefiles/checkexistance.js");
+const removeFav = __webpack_require__(/*! ./removefavourite */ "./filemangaer/favouritefiles/removefavourite.js");
+const readFav = __webpack_require__(/*! ./readfavorite */ "./filemangaer/favouritefiles/readfavorite.js");
+module.exports.FavouriteModule = {
+  favFilePath: "appstore/favs.txt",
+  addFavourite: addfav.addFavourite,
+  checkExistence: checkExist.checkFavExistance,
+  removeFavourite: removeFav.removeFromFile,
+  readFavourite: readFav.readfavourites
+};
+
+/***/ }),
+
+/***/ "./filemangaer/favouritefiles/readfavorite.js":
+/*!****************************************************!*\
+  !*** ./filemangaer/favouritefiles/readfavorite.js ***!
+  \****************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const path = __webpack_require__(/*! path */ "path");
+const fs = __webpack_require__(/*! fs */ "fs");
+const favFilePath = "appstore/favs.txt";
+
+// Function to read data from a file
+function readFromFile() {
+  try {
+    const data = fs.readFileSync(favFilePath, 'utf8');
+    const dataArray = data.split('nextFavouriteAnime');
+    return dataArray;
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      return;
+    }
+  }
+}
+
+// Module function to read favorites
+module.exports.readfavourites = () => {
+  try {
+    let data = readFromFile();
+    if (Array.isArray(data)) {
+      let parsedData = [];
+      data = data.forEach(jsonString => {
+        jsonString = jsonString.trim();
+        // Parse each JSON string
+        try {
+          const parsedJson = JSON.parse(jsonString);
+          parsedData.push(parsedJson);
+        } catch (err) {
+          console.log(jsonString);
+          console.log("Error parsing JSON:", err);
+        }
+      });
+      return parsedData;
+    } else {
+      return;
+    }
+  } catch (err) {
+    return false;
+  }
+};
+
+/***/ }),
+
+/***/ "./filemangaer/favouritefiles/removefavourite.js":
+/*!*******************************************************!*\
+  !*** ./filemangaer/favouritefiles/removefavourite.js ***!
+  \*******************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+// Function to remove specific data from a file
+const fs = __webpack_require__(/*! fs */ "fs");
+const favFilePath = "appstore/favs.txt";
+module.exports.removeFromFile = data => {
+  fs.readFile(favFilePath, 'utf8', (err, fileData) => {
+    if (err) throw err;
+    const lines = fileData.split(JSON.stringify('nextFavouriteAnime'));
+    const updatedData = lines.filter(line => line !== data).join(JSON.stringify('nextFavouriteAnime'));
+    fs.writeFile(favFilePath, updatedData, err => {
+      if (err) throw err;
+      console.log('Data removed from file.');
+    });
+  });
+};
+
+/***/ }),
+
 /***/ "./functions/createdir.js":
 /*!********************************!*\
   !*** ./functions/createdir.js ***!
@@ -29517,6 +29704,7 @@ const fs = __webpack_require__(/*! fs */ "fs");
 const searchModule = __webpack_require__(/*! ../webcrawler/animemodulee/searchanime/searchanime.js */ "./webcrawler/animemodulee/searchanime/searchanime.js");
 const detailsModule = __webpack_require__(/*! ../webcrawler/animemodulee/animeDownload/details.js */ "./webcrawler/animemodulee/animeDownload/details.js");
 const downloadModule = __webpack_require__(/*! ../webcrawler/animemodulee/animeDownload/downloadepisode.js */ "./webcrawler/animemodulee/animeDownload/downloadepisode.js");
+const mainFavModule = __webpack_require__(/*! ./mainprocess/filemanagers/favouritesManager/favmanager.js */ "./src/mainprocess/filemanagers/favouritesManager/favmanager.js");
 function doubleBackslashes(string) {
   let newString = string.replace(/\\/g, '\\\\'); // use regular expression to replace all occurrences
   newString += '\\\\'; // add two backslashes to the end
@@ -29539,7 +29727,8 @@ const createWindow = async () => {
     height: 600,
     args: ['--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--disable-accelerated-2d-canvas', '--disable-gpu-sandbox', '--no-sandbox', '--no-first-run', '--no-zygote', "--disable-notifications", '--single-process', '--disable-web-security', '--disable-features=IsolateOrigins,site-per-process'],
     webPreferences: {
-      preload: 'C:\\Users\\DAVE\\DarkHArvest\\.webpack\\renderer\\main_window\\preload.js'
+      preload: 'C:\\Users\\PC\\OneDrive\\Documents\\Programming\\Javascript\\DarkHArvest\\.webpack\\renderer\\main_window\\preload.js',
+      webSecurity: false
     }
   });
 
@@ -29616,7 +29805,7 @@ async function createDownloaderWindow() {
     height: 600,
     args: ['--disable-gpu', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--disable-accelerated-2d-canvas', '--disable-gpu-sandbox', '--no-sandbox', '--no-first-run', '--no-zygote', "--disable-notifications", '--single-process', '--disable-web-security', '--disable-features=IsolateOrigins,site-per-process'],
     webPreferences: {
-      preload: 'C:\\Users\\DAVE\\DarkHArvest\\.webpack\\renderer\\main_window\\preload.js'
+      preload: 'C:\\Users\\PC\\OneDrive\\Documents\\Programming\\Javascript\\DarkHArvest\\.webpack\\renderer\\main_window\\preload.js'
     }
   });
   crawlerWindow.loadURL('http://localhost:3000/main_window');
@@ -29695,6 +29884,65 @@ ipcMain.handle('get/details', async (event, args) => {
 ipcMain.handle('download/anime', async (event, args) => {
   await downloadModule.downloadAnime(args.start, args.stop, args.first, args.name, searchBrowser, searchPage);
 });
+ipcMain.handle("manageFavourite", async (event, args) => {
+  console.log("section 1 called");
+  //favourties module file manager
+  const response = await mainFavModule.mainFavManager(args);
+  return response;
+});
+
+/***/ }),
+
+/***/ "./src/mainprocess/filemanagers/favouritesManager/favmanager.js":
+/*!**********************************************************************!*\
+  !*** ./src/mainprocess/filemanagers/favouritesManager/favmanager.js ***!
+  \**********************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+const favModule = __webpack_require__(/*! ../../../../filemangaer/favouritefiles/favouriteModule */ "./filemangaer/favouritefiles/favouriteModule.js");
+module.exports.mainFavManager = async args => {
+  let payload = JSON.stringify(args.payload);
+  switch (args.type) {
+    //add favourites
+    case "addFavourite":
+      try {
+        // console.log("payload is",args.payload)
+        favModule.FavouriteModule.addFavourite(payload);
+        return true;
+      } catch (err) {
+        if (err) {
+          return false;
+        }
+      }
+
+    //check if anime exists
+    case "checkExistence":
+      try {
+        // console.log(args.type)
+        // console.log("section 2 called and payload is",args.payload);
+        //check existance of anime on saved list
+        const existanceBool = await favModule.FavouriteModule.checkExistence(payload);
+        // console.log("existence bool is",existanceBool);
+        return existanceBool;
+      } catch (err) {
+        console.log(err);
+      }
+    case "removeFavourite":
+      try {
+        //remove favorite anime
+        favModule.FavouriteModule.removeFavourite(payload);
+      } catch (err) {
+        throw err;
+      }
+    case "retriveFavourite":
+      try {
+        const favList = await favModule.FavouriteModule.readFavourite();
+        return favList;
+      } catch (err) {
+        throw err;
+      }
+  }
+};
 
 /***/ }),
 
@@ -58557,10 +58805,6 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 			return module;
 /******/ 		};
 /******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/compat */
-/******/ 	
-/******/ 	if (typeof __webpack_require__ !== 'undefined') __webpack_require__.ab = __dirname + "/native_modules/";
 /******/ 	
 /************************************************************************/
 /******/ 	
