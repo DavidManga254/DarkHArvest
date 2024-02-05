@@ -1,9 +1,0 @@
-.child-component {
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
-  }
-  
-  .child-component.hidden {
-    opacity: 0;
-  }
-  
